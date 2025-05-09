@@ -11,6 +11,10 @@ const getUserDetail = async (req, res) => {
     
 }
 
+const getUserBasic = async (req, res) => {
+    
+}
+
 const userRegister = async (req, res) => {
     
 }
@@ -30,6 +34,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
     getAllUser,
     getUserDetail,
+    getUserBasic,
     userRegister,
     userLogin,
     updateUser,

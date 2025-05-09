@@ -6,9 +6,7 @@ router.get('/admin', projectController.getAllProject)
 
 router.get('/history/:id', authentication, projectController.getAllProjectHistory)
 
-router.get('/leader/:id', authentication, projectController.getLeaderProject)
-
-router.get('/team/:id', authentication, projectController.getTeamProject)
+router.get('/order/:id', authentication, projectController.getProjectOrder)
 
 router.get('/detail/:id', authentication, projectController.getProjectDetail)
 

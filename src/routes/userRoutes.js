@@ -6,6 +6,8 @@ router.get('/admin', userController.getAllUser)
 
 router.get('/detail/:id', userController.getUserDetail)
 
+router.get('/basic/:id', userController.getUserBasic)
+
 router.post('/register', userController.userRegister)
 
 router.post('/login', userController.userLogin)
