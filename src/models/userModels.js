@@ -40,13 +40,13 @@ const updateUser = (body, user_id) => {
     const values = Object.values(body);
 
     const fields = keys.map(key => `${key} = ?`).join(', ')
-    const sqlQuery = `UPDATE user SET ${fields} WHERE user_id= ?`
+    const sqlQuery = `UPDATE user SET ${fields} WHERE user_id = ?`
 
     return dbPool.execute(sqlQuery, [...values, user_id])
 }
 
 const deleteUser = (user_id) => {
-    const  sqlQuery = `DELETE FROM user WHERE user_id= ?`
+    const  sqlQuery = `DELETE FROM user WHERE user_id = ?`
 
     return dbPool.execute(sqlQuery, [user_id])
 }

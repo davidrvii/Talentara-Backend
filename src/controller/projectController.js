@@ -9,11 +9,7 @@ const getAllProjectHistory = async (req, res) => {
 
 }
 
-const getLeaderProject = async (req, res) => {
-
-}
-
-const getTeamProject = async (req, res) => {
+const getProjectOrder = async (req, res) => {
 
 }
 
