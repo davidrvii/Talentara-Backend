@@ -1,4 +1,5 @@
 const dbPool = require('../config/database')
+const {  getOrCreateIdByName } = require('../models/portfolioModels')
 
 // Get All Project From Database (Testing-Only)
 const getAllProject = () => {
@@ -245,12 +246,11 @@ const createNewProject = async (body, user_id) => {
 }
 
 //Insert Talent Who Accept The Project
-const insertToProjectHasTalent = async (project_id, talent_id, role_id) => {
-    const sqlQuery = `
-        INSERT INTO project_has_talent (project_id, talent_id, role_id)
-        VALUES (?, ?, ?)`
-
-    return dbPool.execute(sqlQuery, [project_id, talent_id, role_id]);
+const insertToProjectHasTalent = async (project_id, talent_id, role_name) => {
+    const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', role_name);
+        if (role_id) {
+            await conn.execute(`INSERT INTO project_has_talent (project_id, talent_id, role_id) VALUES (?, ?, ?)`, [project_id, talent_id, role_id])
+        }
 }
 
 //Update a Project By ID
@@ -420,6 +420,44 @@ const getAllFeatures = () => {
     return dbPool.execute(sqlQuery)
 }
 
+const getProjectRoleRequirement = (project_id) => {
+    const sqlQuery =   `
+        SELECT 
+            phr.role_id,
+            r.role_name,
+            phr.role_amount
+        FROM project_has_role AS phr
+        JOIN role AS r
+            ON phr.role_id = r.role_id
+        WHERE phr.project_id = ?`
+                    
+    return dbPool.execute(sqlQuery, [project_id])
+}
+
+const countAcceptedTalentsByRole = (project_id) => {
+    const sqlQuery =   `
+        SELECT
+            phr.role_id,
+            r.role_name,
+            COUNT(pht.talent_id) AS accepted_count
+        FROM project_has_role AS phr
+        LEFT JOIN project_has_talent AS pht
+            ON phr.project_id = pht.project_id
+            AND phr.role_id = pht.role_id
+        JOIN role AS r
+            ON phr.role_id = r.role_id
+        WHERE phr.project_id = ?
+        GROUP BY phr.role_id, r.role_name`
+
+    return dbPool.execute(sqlQuery, [project_id])
+}
+
+const updateProjectStatus = (project_id, status) => {
+    const sqlQuery = `UPDATE project SET status = ? WHERE project_id = ?`
+
+    return dbPool.execute(sqlQuery, [project_id, status])
+}
+
 module.exports = {
     getAllProject,
     getAllProjectHistory,
@@ -435,5 +473,8 @@ module.exports = {
     getAllRole,
     getAllLanguage,
     getAllTools,
-    getAllFeatures
+    getAllFeatures,
+    getProjectRoleRequirement,
+    countAcceptedTalentsByRole,
+    updateProjectStatus
 }

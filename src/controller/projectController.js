@@ -23,7 +23,7 @@ const getAllProjectHistory = async (req, res) => {
         if (project.length === 0) {
             return response(404, {historyProject: null}, 'Get All Project History: Project History Not Found', res)
         } else {
-            response(200, {historyProject: project}, 'Get All Project History Success', res)
+            return response(200, {historyProject: project}, 'Get All Project History Success', res)
         }
     } catch (error) {
         response(500, {error: error}, 'Get Project History: Server Error', res)
@@ -39,7 +39,7 @@ const getProjectOrder = async (req, res) => {
         if (project.length === 0) {
             return response(404, {projectOrder: null}, 'Get Project Order: Project Not Found', res)
         } else {
-            response(200, {projectOrder: project}, 'Get Project Order Success', res)
+            return response(200, {projectOrder: project}, 'Get Project Order Success', res)
         }
     } catch (error) {
         response(500, {error: error}, 'Get Project Order: Server Error', res)
@@ -55,12 +55,25 @@ const getProjectDetail = async (req, res) => {
         if (project.length === 0) {
             return response(404, {projectDetail: null}, 'Get Project Detail: Project Not Found', res)
         } else {
-            response(200, {projectDetail: project}, 'Get Project Detail Success', res)
+            return response(200, {projectDetail: project}, 'Get Project Detail Success', res)
         }
     } catch (error) {
         response(500, {error: error}, 'Get Project Detail: Server Error', res)
         throw error
     }
+}
+
+async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
+    //Cari kandidat terurut berdasarkan skor kecocokan
+    const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
+    //Pilih top-N sesuai role_amount
+    const selected = candidates.slice(0, role_amount)
+    //Kirim notifikasi undangan ke setiap talent
+    for (const talent of selected) {
+        await sendPushNotification(talent.id, { type: 'PROJECT_INVITE', project_id, role_name })
+    }
+    //Kembalikan daftar talent yang diundang
+    return selected.map(t => t.id)
 }
 
 const createNewProject = async (req, res) => {
@@ -92,6 +105,7 @@ const createNewProject = async (req, res) => {
         const projectResult = await projectModel.createNewProject(newProjectBody, user_id);
         const project_id = projectResult.project_id
 
+        //Create Project Timeline
         for (const phase of parsed.timeline) {
             await timelineModel.createNewTimeline({
                 project_id,
@@ -100,6 +114,9 @@ const createNewProject = async (req, res) => {
                 end_date: phase.end_date
             })
         }
+
+        //Invite Project Manager
+        await inviteTalent(project_id, 'Project Manager', 1)
 
         response(201, {newProject: newProjectBody}, 'Create New Project Success', res)
     } catch (error) {
@@ -115,11 +132,18 @@ const updateProject = async (req, res) => {
     const { body } = req
 
     try {
+        //Update Project
         await projectModel.updateProject(body, project_id)
-        
-        const recommendations = await findRecommendedTalent(project_id, body.roles)
-        // Lanjutkan: kirim notifikasi ke talent sesuai `recommendations`
 
+        //Get project Required Role
+        const requiredRole = await projectModel.getProjectRoleRequirement(project_id)
+        
+        //Parallel Role Invite
+        await Promise.all(
+            requiredRole.map(({ role_name, role_amount }) =>
+                inviteTalent(project_id, role_name, role_amount)
+            )
+        )
         response(200, {updatedProject: body}, 'Update Project Success', res)
     } catch (error) {
         response(500, {error: error}, 'Update Project: Server Error', res)
@@ -129,17 +153,45 @@ const updateProject = async (req, res) => {
 
 // Talent Accept or Decline Project
 const respondToProjectOffer = async (req, res) => {
-    const { project_id, talent_id, role_id, accept } = req.body;
+    const { project_id, talent_id, role_name, accept } = req.body
 
     try {
-        if (accept === true) {
-        await projectModel.insertToProjectHasTalent(project_id, talent_id, role_id)
-        return response(200, { accepted: true }, 'Talent accepted the project', res)
-        } else {
-        const [updated] = await talentModel.updateTalentDeclineCount(talent_id)
-        const newDeclineCount = updated?.affectedRows > 0 ? updated : null
-        return response(200, {accepted: false, project_declined: newDeclineCount}, 'Talent declined the project', res)
+        const requiredRoles = await projectModel.getProjectRoleRequirement(project_id)
+        const role = requiredRoles.find(r => r.role_name === role_name)
+        const countRoles = await projectModel.countAcceptedTalentsByRole(project_id)
+        const count = countRoles.find(r => r.role_name === role_name)
+
+        if (!accept) {
+            // Decline: retry invite for declined role
+            await inviteTalent(project_id, role_name, role.required_amount, [talent_id])
+            return response(200, { accepted: false }, 'Talent Declined and Retrying Invite', res)
         }
+
+        // Talent Late Accept Handling
+        if (count >= role.required_amount) {
+            await sendPushNotification(talent_id, { type: 'TEAM_FULL', project_id, role_name })
+            return response(200, { accepted: false, message: 'Team already full' }, 'Team Already Full', res)
+        }
+
+        // Normal accept: insert to project_has_talent
+        await projectModel.insertToProjectHasTalent(project_id, talent_id, role_name)
+
+        // Check If Every Roles Is FulFilled
+        const allFulfilled = requiredRoles.every(required => {
+            const accepted = countRoles.find(role => role.role_name === required.role_name)?.accepted_count || 0
+            return accepted >= required.role_amount
+        })
+
+        if (allFulfilled) {
+            await projectModel.updateProjectStatus(project_id, 'in_progress')
+            const team = await projectModel.getFullTeam(project_id)
+            await Promise.all(
+                team.map(t => sendPushNotification(t.id, { type: 'PROJECT_STARTED', project_id }))
+            )
+            return response(200, { accepted: true, next: 'project_started' }, 'Project Started', res)
+        }
+
+        return response(200, { accepted: true, next: 'waiting_for_team' }, 'Talent Accepted', res)
     } catch (error) {
         response(500, { error }, 'Respond To Project Offer: Server Error', res)
         throw error
