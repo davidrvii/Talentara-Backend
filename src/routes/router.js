@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 
 router.use('/user', userRoutes)
 router.use('/talent', talentRoutes)
-router.user('/project', projectRoutes)
+router.use('/project', projectRoutes)
 router.use('/notification', notificationRoutes)
 router.use('/timeline', timelineRoutes)
 router.use('/portfolio', portfolioRoutes)
