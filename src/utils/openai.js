@@ -34,18 +34,19 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
             2. Tentukan product type dari proyek ini (Pilihan: ${productTypeList} atau buat product type baru jika tidak ada pilihan).
             3. Tentukan bahasa pemrograman yang cocok dengan proyek ini (Pilihan: ${languageList} atau buat bahasa pemrograman baru jika tidak ada pilihan).
             4. Tentukan tools utama yang akan digunakan di proyek ini. (Pilihan: ${toolsList} atau buat tools baru jika tidak ada pilihan).
-            4. Tentukan role yang dibutuhkan (Pilihan: ${roleList} atau buat role baru jika tidak ada pilihan) berserta jumlah tiap rolenya.
-            5. Tentukan feature yang dibutuhkan proyek ini (Pilihan: ${featureList} atau buat feature baru jika tidak ada pilihan).
-            5. Tulis ulang deskripsi project agar lebih profesional, jelas dan mudah dipahami.
-            6. Buat estimasi pembagian fase project (timeline) berdasarkan start_date: ${start_date} dan end_date: ${end_date}. Setidaknya ada 3 fase.
+            5. Tentukan role yang dibutuhkan (Pilihan: ${roleList} atau buat role baru jika tidak ada pilihan) berserta jumlah tiap rolenya. Setiap project wajib memiliki 1 Role Project Manager.
+            6. Tentukan feature yang dibutuhkan proyek ini (Pilihan: ${featureList} atau buat feature baru jika tidak ada pilihan).
+            7. Tulis ulang deskripsi project agar lebih profesional, jelas dan mudah dipahami.
+            8. Buat estimasi pembagian fase project (timeline) berdasarkan start_date: ${start_date} dan end_date: ${end_date}. Setidaknya ada 3 fase.
 
             Format output JSON:
             {
             "platforms": ["..."],
             "product_types": ["..."],
             "roles": [
-                {"role_name": "Frontend Developer", "amount": 1},
-                {"role_name": "Backend Developer", "amount": 1}
+                {"role_name": "Project Manager", "amount": 1},
+                {"role_name": "Frontend Developer", "amount": 2},
+                {"role_name": "Backend Developer", "amount": 2}
             ],
             "languages": ["..."],
             "tools": ["..."],
