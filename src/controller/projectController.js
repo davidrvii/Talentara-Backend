@@ -1,9 +1,8 @@
 const projectModel = require('../models/projectModels')
 const timelineModel = require('../models/timelineModels')
-const talentModel = require('../models/talentModels')
 const response = require('../../response')
 const { generateProjectAnalysis } = require('../utils/openai')
-const { findRecommendedTalent } = require('../utils/ncfRecommender')
+const { findRecommendedTalent } = require('../utils/ncf')
 
 const getAllProject = async (req, res) => {
     try {

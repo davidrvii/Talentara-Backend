@@ -41,6 +41,58 @@ const getAllTalent = () => {
     return dbPool.execute(sqlQuery);
 };
 
+const getFilteredTalent = (role_name, excludeIds = []) => {
+    // Siapkan bagian excludeIds
+    const excludeIdsCondition = excludeIds.length > 0 
+        ? `AND t.talent_id NOT IN (${excludeIds.map(() => '?').join(',')})` 
+        : '';
+
+    const sqlQuery = `
+        SELECT 
+            t.*,
+            u.user_name,
+            u.user_email,
+            u.user_image,
+            u.linkedin,
+            u.github,
+            GROUP_CONCAT(DISTINCT r.role_name SEPARATOR '|') AS roles,
+            GROUP_CONCAT(DISTINCT l.language_name SEPARATOR '|') AS languages,
+            GROUP_CONCAT(DISTINCT ts.tools_name SEPARATOR '|') AS tools,
+            GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
+            GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms
+        FROM talent t
+
+        LEFT JOIN user u ON u.user_id = t.talent_id
+
+        LEFT JOIN talent_has_role thr ON t.talent_id = thr.talent_id
+        LEFT JOIN role r ON thr.role_id = r.role_id
+
+        LEFT JOIN talent_has_language thl ON t.talent_id = thl.talent_id
+        LEFT JOIN language l ON thl.language_id = l.language_id
+
+        LEFT JOIN talent_has_tools tht ON t.talent_id = tht.talent_id
+        LEFT JOIN tools ts ON tht.tools_id = ts.tools_id
+
+        LEFT JOIN talent_has_product_type thpt ON t.talent_id = thpt.talent_id
+        LEFT JOIN product_type pt ON thpt.product_type_id = pt.product_type_id
+
+        LEFT JOIN talent_has_platform thpf ON t.talent_id = thpf.talent_id
+        LEFT JOIN platform pf ON thpf.platform_id = pf.platform_id
+
+        WHERE 
+            t.is_on_project = false
+            AND r.role_name = ?
+            ${excludeIdsCondition}
+
+        GROUP BY t.talent_id
+    `;
+
+    const params = [role_name, ...excludeIds];
+
+    return dbPool.execute(sqlQuery, params);
+};
+
+
 //Get a Talent Detail By ID
 const getTalentDetail = (talent_id) => {
     const sqlQuery = `
@@ -279,6 +331,7 @@ const deleteTalent = (talent_id) => {
 
 module.exports = {
     getAllTalent,
+    getFilteredTalent,
     getTalentDetail,
     createNewTalent,
     updateTalent,
