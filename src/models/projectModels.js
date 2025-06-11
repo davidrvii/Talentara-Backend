@@ -465,7 +465,6 @@ const updateProjectStatus = (project_id, status) => {
 module.exports = {
     getAllProject,
     getAllProjectHistory,
-    getLeaderProject,
     getProjectDetail,
     getProjectOrder,
     createNewProject,

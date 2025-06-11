@@ -1,12 +1,10 @@
-const { Configuration, OpenAIApi } = require('openai')
+const OpenAI = require('openai')
 const projectModel = require('../models/projectModels')
 require('dotenv').config();
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
 })
-
-const openai = new OpenAIApi(configuration)
 
 const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => {
   try {
