@@ -8,7 +8,7 @@ const timelineRoutes = require('./timelineRoutes')
 const portfolioRoutes = require('./portfolioRoutes')
 
 router.get('/', (req, res) => {
-    res.send("Welcome to Talentara")
+    res.status(200).send("Welcome to Talentara API")
 })
 
 router.use('/user', userRoutes)
