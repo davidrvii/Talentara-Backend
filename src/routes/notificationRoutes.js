@@ -8,7 +8,7 @@ router.get('/history/:id', authentication, notificationController.getHistoryNoti
 
 router.get('/detail/:id', authentication, notificationController.getNotificationDetail)
 
-router.post('add', authentication, authorization, notificationController.createNewNotification)
+router.post('/add', authentication, authorization, notificationController.createNewNotification)
 
 router.patch('/update/:id', authentication, authorization, notificationController.updateNotification)
 

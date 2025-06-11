@@ -16,6 +16,7 @@ const getAllProject = () => {
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
+
         LEFT JOIN user u ON tlt.user_id = u.user_id
         LEFT JOIN role r ON pht.role_id = r.role_id
 
@@ -34,7 +35,8 @@ const getAllProject = () => {
         LEFT JOIN project_has_feature phf ON p.project_id = phf.project_id
         LEFT JOIN feature f ON phf.feature_id = f.feature_id
 
-        GROUP BY p.project_id`
+        GROUP BY p.project_id
+        ORDER BY p.project_id DESC`
     
     return dbPool.execute(sqlQuery)
 }
@@ -54,6 +56,7 @@ const getAllProjectHistory = (talent_id) => {
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
+
         LEFT JOIN user u ON tlt.user_id = u.user_id
         LEFT JOIN role r ON pht.role_id = r.role_id
 
@@ -95,6 +98,7 @@ const getProjectDetail = (project_id) => {
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
+
         LEFT JOIN user u ON tlt.user_id = u.user_id
         LEFT JOIN role r ON pht.role_id = r.role_id
 

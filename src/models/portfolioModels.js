@@ -12,6 +12,7 @@ const getAllPortfolio = () => {
             GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms,
             GROUP_CONCAT(DISTINCT f.feature_name SEPARATOR '|') AS features
         FROM portfolio p
+
         LEFT JOIN portfolio_has_role pr ON p.portfolio_id = pr.portfolio_id
         LEFT JOIN role r ON pr.role_id = r.role_id
 
@@ -30,7 +31,8 @@ const getAllPortfolio = () => {
         LEFT JOIN portfolio_has_feature phf ON p.portfolio_id = phf.portfolio_id
         LEFT JOIN feature f ON phf.feature_id = f.feature_id
 
-        GROUP BY p.portfolio_id`
+        GROUP BY p.portfolio_id
+        ORDER BY p.portfolio_id DESC`
     
     return dbPool.execute(sqlQuery)
 }
@@ -47,6 +49,7 @@ const getAllTalentPortfolio = (talent_id) => {
             GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms,
             GROUP_CONCAT(DISTINCT f.feature_name SEPARATOR '|') AS features
         FROM portfolio p
+
         LEFT JOIN portfolio_has_role pr ON p.portfolio_id = pr.portfolio_id
         LEFT JOIN role r ON pr.role_id = r.role_id
 

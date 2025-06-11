@@ -36,6 +36,7 @@ const getAllTalent = () => {
         LEFT JOIN platform pf ON thpf.platform_id = pf.platform_id
 
         GROUP BY t.talent_id
+        ORDER BY t.talent_id DESC
     `;
 
     return dbPool.execute(sqlQuery);
