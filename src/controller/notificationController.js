@@ -4,7 +4,7 @@ const response = require('../../response')
 const getAllNotification = async (req, res) => {
     try {
         const [notifications] = await notificationModel.getAllNotification()
-        response(200, {notifications: notifications}, 'Get All Notification'. res)
+        response(200, {notifications: notifications}, 'Get All Notification', res)
     } catch (error) {
         response(500, {error: error}, 'Get All Notification: Server Error', res)
         throw error
@@ -12,10 +12,10 @@ const getAllNotification = async (req, res) => {
 }
 
 const getHistoryNotification = async (req, res) => {
-    const { user_id } = req.body
+    const { id } = req.params
 
     try {
-        const [notification] = await notificationModel.getHistoryNotification(user_id)
+        const [notification] = await notificationModel.getHistoryNotification(id)
         if (notification.length === 0) {
             return response(404, {notificationDetail: null}, 'Get History Notification: Timeline Not Found', res)
         } else {
@@ -28,10 +28,10 @@ const getHistoryNotification = async (req, res) => {
 }
 
 const getNotificationDetail = async (req, res) => {
-    const { notification_id } = req.body
+    const { id } = req.params
 
     try {
-        const [notification] = await notificationModel.getNotificationDetail(notification_id)
+        const [notification] = await notificationModel.getNotificationDetail(id)
         if (notification.length === 0) {
             return response(404, {notificationDetail: null}, 'Get Notification Detail: Notification Not Found', res)
         } else {
@@ -56,11 +56,11 @@ const createNewNotification = async (req, res) => {
 }
 
 const updateNotification = async (req, res) => {
-    const { notification_id } = req.params
+    const { id } = req.params
     const { body } = req
 
     try {
-        await notificationModel.updateNotification(body, notification_id)
+        await notificationModel.updateNotification(body, id)
         response(200, {updatedNotification: body}, 'Update Notification Success', res)
     } catch (error) {
         response(500, {error: error}, 'Update Notification: Server Error', res)
@@ -69,11 +69,11 @@ const updateNotification = async (req, res) => {
 }
 
 const deleteNotification = async (req, res) => {
-    const { notification_id } = req.params
+    const { id } = req.params
 
     try {
-        await notificationModel.deleteNotification(notification_id)
-        response(200, {deletedNotificationId: notification_id}, 'Delete Notification Success', res)
+        await notificationModel.deleteNotification(id)
+        response(200, {deletedNotificationId: id}, 'Delete Notification Success', res)
     } catch (error) {
         response(500, {error: error}, 'Delete Notification: Server Error', res)
         throw error

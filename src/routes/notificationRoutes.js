@@ -6,7 +6,7 @@ router.get('/admin', notificationController.getAllNotification)
 
 router.get('/history/:id', authentication, notificationController.getHistoryNotification)
 
-router.get('/detail/:id', authenticationnotificationController.getNotificationDetail)
+router.get('/detail/:id', authentication, notificationController.getNotificationDetail)
 
 router.post('add', authentication, authorization, notificationController.createNewNotification)
 

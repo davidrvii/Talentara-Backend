@@ -7,7 +7,7 @@ const { findRecommendedTalent } = require('../utils/ncf')
 const getAllProject = async (req, res) => {
     try {
         const [projects] = await projectModel.getAllProject()
-        response(200, {projects: projects}, 'Get All Project'. res)
+        response(200, {projects: projects}, 'Get All Project', res)
     } catch (error) {
         response(500, {error: error}, 'Get All Project: Server Error', res)
         throw error
@@ -15,10 +15,10 @@ const getAllProject = async (req, res) => {
 }
 
 const getAllProjectHistory = async (req, res) => {
-    const { talent_id } = req.body
+    const { id } = req.params
 
     try {
-        const [project] = await projectModel.getAllProjectHistory(talent_id)
+        const [project] = await projectModel.getAllProjectHistory(id)
         if (project.length === 0) {
             return response(404, {historyProject: null}, 'Get All Project History: Project History Not Found', res)
         } else {
@@ -31,10 +31,10 @@ const getAllProjectHistory = async (req, res) => {
 }
 
 const getProjectOrder = async (req, res) => {
-    const { project_id } = req.body
+    const { id } = req.params
 
     try {
-        const [project] = await projectModel.getProjectOrder(project_id)
+        const [project] = await projectModel.getProjectOrder(id)
         if (project.length === 0) {
             return response(404, {projectOrder: null}, 'Get Project Order: Project Not Found', res)
         } else {
@@ -47,10 +47,10 @@ const getProjectOrder = async (req, res) => {
 }
 
 const getProjectDetail = async (req, res) => {
-    const { project_id } = req.body
+    const { id } = req.params
 
     try {
-        const [project] = await projectModel.getProjectDetail(project_id)
+        const [project] = await projectModel.getProjectDetail(id)
         if (project.length === 0) {
             return response(404, {projectDetail: null}, 'Get Project Detail: Project Not Found', res)
         } else {
@@ -85,6 +85,9 @@ const createNewProject = async (req, res) => {
     } = req.body
     try {
         const parsed = await generateProjectAnalysis(project_desc, start_date, end_date)
+        if (!parsed) {
+            return response(500, {}, 'Error generating project analysis', res)
+        }       
 
         // Persiapkan data untuk insert project
         const newProjectBody = {
@@ -127,15 +130,15 @@ const createNewProject = async (req, res) => {
 //Finalized Project By Project Leader
 //Update Platform, Product Type, Role (Amount), Language, Tools and Feature For Talent Filtering 
 const updateProject = async (req, res) => {
-    const { project_id } = req.params
+    const { id } = req.params
     const { body } = req
 
     try {
         //Update Project
-        await projectModel.updateProject(body, project_id)
+        await projectModel.updateProject(body, id)
 
         //Get project Required Role
-        const requiredRole = await projectModel.getProjectRoleRequirement(project_id)
+        const requiredRole = await projectModel.getProjectRoleRequirement(id)
         
         //Parallel Role Invite
         await Promise.all(
@@ -198,11 +201,11 @@ const respondToProjectOffer = async (req, res) => {
 }
 
 const deleteProject = async (req, res) => {
-    const { project_id } = req.params
+    const { id } = req.params
 
     try {
-        await projectModel.deleteProject(project_id)
-        response(200, {deletedProjectId: project_id}, 'Delete Project Success', res)
+        await projectModel.deleteProject(id)
+        response(200, {deletedProjectId: id}, 'Delete Project Success', res)
     } catch (error) {
         response(500, {error: error}, 'Delete Project: Server Error', res)
         throw error

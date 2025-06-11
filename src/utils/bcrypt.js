@@ -1,16 +1,16 @@
 const bcrypt = require("bcryptjs")
 
-function hashPassword(plainPassword){
+function hashedPassword(plainPassword){
     const salt = bcrypt.genSaltSync(10)
     return bcrypt.hashSync(plainPassword,salt)
 }
 
-function comparedPassword (plainPassword,hashPassword){
-    return bcrypt.compareSync(plainPassword,hashPassword)
+function comparedPassword (plainPassword,hashedPassword){
+    return bcrypt.compareSync(plainPassword,hashedPassword)
 }
 
 
 module.exports={
-    hashPassword,
+    hashedPassword,
     comparedPassword
 }

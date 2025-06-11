@@ -1,4 +1,4 @@
-const { hashPassword, comparedPassword, comparedUsername } = require('../utils/bcrypt')
+const { hashedPassword, comparedPassword } = require('../utils/bcrypt')
 const userModel = require('../models/userModels')
 const response = require('../../response')
 const { generateToken } = require('../utils/jwt')
@@ -14,10 +14,10 @@ const getAllUser = async (req, res) => {
 }
 
 const getUserDetail = async (req, res) => {
-    const { user_id } = req.body
+    const { id } = req.params
 
     try {
-        const [user] = await userModel.getUserDetail(user_id)
+        const [user] = await userModel.getUserDetail(id)
         if (user.length === 0 ) {
             return response(404, {usersDetail: null}, 'Get User Detail: User Not Found', res)
         } else {
@@ -30,10 +30,10 @@ const getUserDetail = async (req, res) => {
 }
 
 const getUserBasic = async (req, res) => {
-    const { user_id } = req.body
+    const { id } = req.params
 
     try {
-        const [user] = await userModel.getUserBasic(user_id)
+        const [user] = await userModel.getUserBasic(id)
         if (user.length === 0 ) {
             return response(404, {usersBasic: null}, 'Get User Basic: User Not Found', res)
         } else {
@@ -49,7 +49,7 @@ const userRegister = async (req, res) => {
     const { body } = req
 
     try {
-        const hashedPassword = hashPassword(body.user_password)
+        const hashedPassword = hashedPassword(body.user_password)
         const newUser = {
             ...body,
             password: hashedPassword
@@ -87,11 +87,11 @@ const userLogin = async (req, res) => {
 }
 
 const updateUser = async (req, res) => {
-    const { user_id } = req.params
+    const { id } = req.params
     const { body } = req
 
     try {
-        await userModel.updateUser(body, user_id)
+        await userModel.updateUser(body, id)
         response(200, {updatedUser: body}, 'Update User Success', res)
     } catch (error) {
         response(500, {error: error}, 'Update User: Server Error', res)
@@ -100,11 +100,11 @@ const updateUser = async (req, res) => {
 }
 
 const deleteUser = async (req, res) => {
-    const { user_id } = req.params
+    const { id } = req.params
 
     try {
-        await userModel.deleteUser(user_id)
-        response(200, {deletedUserId: user_id}, 'Delete User Success', res)
+        await userModel.deleteUser(id)
+        response(200, {deletedUserId: id}, 'Delete User Success', res)
     } catch (error) {
         response(500, {error: error}, 'Delete User: Server Error', res)
         throw error

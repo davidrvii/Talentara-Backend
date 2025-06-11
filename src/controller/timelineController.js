@@ -4,7 +4,7 @@ const response = require('../../response')
 const getAllTimeline = async (req, res) => {
     try {
         const [timelines] = await timelineModel.getAllTimeline()
-        response(200, {timelines: timelines}, 'Get All Timeline'. res)
+        response(200, {timelines: timelines}, 'Get All Timeline', res)
     } catch (error) {
         response(500, {error: error}, 'Get All Timeline: Server Error', res)
         throw error
@@ -12,10 +12,10 @@ const getAllTimeline = async (req, res) => {
 }
 
 const getTimelineDetail = async (req, res) => {
-    const { timeline_id } = req.body
+    const { id } = req.params
 
     try {
-        const [timeline] = await timelineModel.getTimelineDetail(timeline_id)
+        const [timeline] = await timelineModel.getTimelineDetail(id)
         if (timeline.length === 0) {
             return response(404, {timelineDetail: null}, 'Get Timeline Detail: Timeline Not Found', res)
         } else {
@@ -28,10 +28,10 @@ const getTimelineDetail = async (req, res) => {
 }
 
 const getCurrentTimeline = async (req, res) => {
-    const { project_id } = req.body
+    const { id } = req.params
 
     try {
-        const [timeline] = await timelineModel.getCurrentTimeline(project_id)
+        const [timeline] = await timelineModel.getCurrentTimeline(id)
         if (timeline.length === 0) {
             return response(404, {currentTimeline: null}, 'Get Current Timeline: Timeline Not Found', res)
         } else {
@@ -44,10 +44,10 @@ const getCurrentTimeline = async (req, res) => {
 }
 
 const getAllTimelineProject = async (req, res) => {
-const { project_id } = req.body
+const { id } = req.params
 
     try {
-        const [timeline] = await timelineModel.getAllTimelineProject(project_id)
+        const [timeline] = await timelineModel.getAllTimelineProject(id)
         if (timeline.length === 0) {
             return response(404, {timelineProject: null}, 'Get All Timeline Project: Timeline Not Found', res)
         } else {
@@ -71,11 +71,11 @@ const createNewTimeline = async (req, res) => {
 }
 
 const updateTimeline = async (req, res) => {
-    const { timeline_id } = req.params
+    const { id } = req.params
     const { body } = req
 
     try {
-        await timelineModel.updateTimeline(body, timeline_id)
+        await timelineModel.updateTimeline(body, id)
         response(200, {updatedTimeline: body}, 'Update Timeline Success', res)
     } catch (error) {
         response(500, {error: error}, 'Update Timeline: Server Error', res)
@@ -84,11 +84,11 @@ const updateTimeline = async (req, res) => {
 }
 
 const deleteTimeline = async (req, res) => {
-    const { timeline_id } = req.params
+    const { id } = req.params
 
     try {
-        await timelineModel.deleteTimeline(timeline_id)
-        response(200, {deletedTimelineId: timeline_id}, 'Delete Timeline Success', res)
+        await timelineModel.deleteTimeline(id)
+        response(200, {deletedTimelineId: id}, 'Delete Timeline Success', res)
     } catch (error) {
         response(500, {error: error}, 'Delete Timeline: Server Error', res)
         throw error

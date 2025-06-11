@@ -4,14 +4,18 @@ const response = require('../../response')
 
 const authentication = async (req, res, next) => {
     try {
-        const  authHeader = req.headers['Auhtorization'] || req.headers['authorization']
+        const  authHeader = req.headers['Authorization'] || req.headers['authorization']
 
         if(!authHeader || !authHeader.startsWith('Bearer ')) {
             return response(401, {authenticationHeader: authHeader}, 'Bearer Token Not Provided', res)
         }
         
         const token = authHeader.split(' ')[1]
-        const decoded =  verifyToken(token)
+        try {
+            decoded = verifyToken(token)
+        } catch (err) {
+            return response(401, {}, 'Invalid or Expired Token', res)
+        }
 
         const [userRows] = await userModel.authentication(decoded.email)
         if(userRows.length === 0){
