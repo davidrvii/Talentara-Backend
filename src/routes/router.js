@@ -11,6 +11,9 @@ router.get('/', (req, res) => {
     res.status(200).send("Welcome to Talentara API")
 })
 
+// Handle favicon.ico → Avoid 502 on browser
+router.get('/favicon.ico', (req, res) => res.status(204).end())
+
 router.use('/user', userRoutes)
 router.use('/talent', talentRoutes)
 router.use('/project', projectRoutes)
