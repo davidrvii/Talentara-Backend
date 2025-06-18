@@ -24,11 +24,11 @@ const getNotificationDetail = (notification_id) => {
 }
 
 //Create a New Notification
-const createNewNotification = (body, user_id) => {
+const createNewNotification = (body) => {
     const sqlQuery =   `INSERT INTO notification (user_id, notification_title, notification_desc)
                         VALUES (?, ?, ?)`
 
-    return dbPool.execute(sqlQuery, [user_id, body.notification_title, body.notification_desc])
+    return dbPool.execute(sqlQuery, [body.user_id, body.notification_title, body.notification_desc])
 }
 
 //Update a Notification By ID (Testing-Only)
