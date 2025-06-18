@@ -79,7 +79,7 @@ const userLogin = async (req, res) => {
 
         const token = generateToken({user_id: user.user_id, user_email: user.user_email})
 
-        response(2000, {loginResult: {user_email, user_password, token}}, 'User Login Success', res)
+        response(200, {loginResult: {user_email, user_password, token}}, 'User Login Success', res)
     } catch (error) {
         response(500, {error: error}, 'User Login: Server Error', res)
         throw error
