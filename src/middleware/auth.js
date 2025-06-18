@@ -32,7 +32,7 @@ const authentication = async (req, res, next) => {
 
 const authorization = async (req, res, next) => {
     try {
-        const[userRows] = await userModel.getUserDetail(req.userData.email)
+        const[userRows] = await userModel.userLogin(req.userData.user_email)
         if(userRows.length === 0){
             return response(403, {authorizedUser: userRows}, "Authorization: Access Denied", res)
         }
