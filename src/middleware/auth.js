@@ -13,7 +13,7 @@ const authentication = async (req, res, next) => {
         const token = authHeader.split(' ')[1]
         const decoded = verifyToken(token)
 
-        const [userRows] = await userModel.userLogin(decoded.email)
+        const [userRows] = await userModel.userLogin(decoded.user_email)
         if(userRows.length === 0){
             return response(401, {authenticatedUser: userRows}, 'Authentication : User Not Found', res)
         } 
