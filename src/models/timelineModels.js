@@ -19,7 +19,7 @@ const getTimelineDetail = (timeline_id) => {
 //Get Latest Incomplete Project Timeline Phase By Project ID
 const getCurrentTimeline = (project_id) => {
     const sqlQuery =   `SELECT * FROM timeline
-                        WHERE project_id = ? AND complete_date IS NULL
+                        WHERE project_id = ? AND completed_date IS NULL
                         ORDER BY start_date ASC
                         LIMIT 1`
 
