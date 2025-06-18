@@ -6,7 +6,7 @@ router.get('/admin', timelineController.getAllTimeline)
 
 router.get('/detail/:id', authentication, timelineController.getTimelineDetail)
 
-router.get('/current/id', authentication, timelineController.getCurrentTimeline)
+router.get('/current/:id', authentication, timelineController.getCurrentTimeline)
 
 router.get('/project/:id', authentication, timelineController.getAllTimelineProject)
 
