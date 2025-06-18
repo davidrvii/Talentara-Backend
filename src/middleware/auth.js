@@ -11,11 +11,7 @@ const authentication = async (req, res, next) => {
         }
         
         const token = authHeader.split(' ')[1]
-        try {
-            decoded = verifyToken(token)
-        } catch (err) {
-            return response(401, {}, 'Invalid or Expired Token', res)
-        }
+        decoded = verifyToken(token)
 
         const [userRows] = await userModel.userLogin(decoded.email)
         if(userRows.length === 0){
