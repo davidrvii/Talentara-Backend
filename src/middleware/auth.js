@@ -17,7 +17,7 @@ const authentication = async (req, res, next) => {
             return response(401, {}, 'Invalid or Expired Token', res)
         }
 
-        const [userRows] = await userModel.authentication(decoded.email)
+        const [userRows] = await userModel.userLogin(decoded.email)
         if(userRows.length === 0){
             return response(401, {authenticatedUser: userRows}, 'Authentication : User Not Found', res)
         } 
