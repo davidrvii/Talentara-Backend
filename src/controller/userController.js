@@ -49,10 +49,10 @@ const userRegister = async (req, res) => {
     const { body } = req
 
     try {
-        const hashedPassword = hashedPassword(body.user_password)
+        const password = hashedPassword(body.user_password)
         const newUser = {
             ...body,
-            password: hashedPassword
+            password: password
         }
         await userModel.userRegister(newUser)
         response(201, {registResult: body}, 'Create New User Success', res)
