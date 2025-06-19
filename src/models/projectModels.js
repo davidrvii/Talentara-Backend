@@ -16,8 +16,8 @@ const getAllProject = () => {
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
-
-        LEFT JOIN user u ON tlt.user_id = u.user_id
+        LEFT JOIN user u ON tlt.talent_id = u.user_id
+        
         LEFT JOIN role r ON pht.role_id = r.role_id
 
         LEFT JOIN project_has_tools pht2 ON p.project_id = pht2.project_id
@@ -56,8 +56,8 @@ const getAllProjectHistory = (talent_id) => {
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
+        LEFT JOIN user u ON tlt.talent_id = u.user_id
 
-        LEFT JOIN user u ON tlt.user_id = u.user_id
         LEFT JOIN role r ON pht.role_id = r.role_id
 
         LEFT JOIN project_has_tools pht2 ON p.project_id = pht2.project_id
