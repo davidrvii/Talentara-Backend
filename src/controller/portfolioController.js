@@ -44,7 +44,8 @@ const getPortfolioDetail = async (req, res) => {
 }
 
 const createNewPortfolio = async (req, res) => {
-    const { body, talent_id } = req
+    const { body } = req
+    const talent_id = req.userData.user_id
 
     try {
         await portfolioModel.createNewPortfolio(body, talent_id)
