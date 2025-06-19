@@ -145,7 +145,7 @@ const updateProject = async (req, res) => {
         //Parallel Role Invite
         await Promise.all(
             requiredRole.map(({ role_name, role_amount }) =>
-                inviteTalent(project_id, role_name, role_amount)
+                inviteTalent(id, role_name, role_amount)
             )
         )
         response(200, {updatedProject: body}, 'Update Project Success', res)
