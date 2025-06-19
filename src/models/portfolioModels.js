@@ -153,65 +153,51 @@ const createNewPortfolio = async (body, talent_id) => {
 //Create a New Portfolio
 const uploadPortfolio = async (conn, body, talent_id) => {
     const [portfolioRes] = await conn.execute(
-        `INSERT INTO portfolio (talent_id, portfolio_name, portfolio_linkedin, portfolio_source, portfolio_desc)
-        VALUES (?, ?, ?, ?, ?)`,
+        `INSERT INTO portfolio (talent_id, portfolio_name, portfolio_linkedin, portfolio_github, portfolio_desc, start_date, end_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [
             talent_id,
             body.portfolio_name,
             body.portfolio_linkedin,
-            body.portfolio_source,
-            body.portfolio_desc
+            body.portfolio_github,
+            body.portfolio_desc,
+            body.start_date,
+            body.end_date
         ]
     )
     const portfolio_id = portfolioRes.insertId
 
-    for (const platformName of body.platforms || []) {
-        const platform_id = await getOrCreateIdByName('platform', 'platform_name', 'platform_id', platformName)
-        if (platform_id) {
-            await conn.execute(
-            `INSERT INTO portfolio_has_platform (portfolio_id, platform_id) VALUES (?, ?)`, 
-            [portfolio_id, platform_id])
+    // Helper insert function
+    const insertMany = async (items, tableName, columnName, columnIdName) => {
+        for (const itemName of items || []) {
+            const id = await getOrCreateIdByName(tableName, columnName, columnIdName, itemName)
+            if (id) {
+                await conn.execute(
+                    `INSERT INTO portfolio_has_${tableName} (portfolio_id, ${columnIdName}) VALUES (?, ?)`,
+                    [portfolio_id, id]
+                )
+            }
         }
     }
 
-    for (const toolsName of body.tools || []) {
-        const tools_id = await getOrCreateIdByName('tools', 'tools_name', 'tools_id', toolsName)
-        if (tools_id) {
-            await conn.execute(
-            `INSERT INTO portfolio_has_tools (portfolio_id, tools_id) VALUES (?, ?)`, 
-            [portfolio_id, tools_id])
-        }
-    }
+    // Insert roles
+        await insertMany(body.roles, 'role', 'role_name', 'role_id')
 
-    for (const languageName of body.languages || []) {
-        const language_id = await getOrCreateIdByName('language', 'language_name', 'language_id', languageName)
-        if (language_id) {
-            await conn.execute(
-            `INSERT INTO portfolio_has_language (portfolio_id, language_id) VALUES (?, ?)`, 
-            [portfolio_id, language_id])
-        }
-    }
+        // Insert tools
+        await insertMany(body.tools, 'tools', 'tools_name', 'tools_id')
 
-    for (const roleName of body.roles || []) {
-        const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', roleName)
-        if (role_id) {
-            await conn.execute(
-            `INSERT INTO portfolio_has_role (portfolio_id, role_id) VALUES (?, ?)`, 
-            [portfolio_id, role_id])
-        }
-    }
+        // Insert platforms
+        await insertMany(body.platforms, 'platform', 'platform_name', 'platform_id')
 
-    for (const productTypeName of body.product_types || []) {
-        const product_type_id = await getOrCreateIdByName('product_type', 'product_type_name', 'product_type_id', productTypeName)
-        if (product_type_id) {
-            await conn.execute(
-            `INSERT INTO portfolio_has_product_type (portfolio_id, product_type_id) VALUES (?, ?)`, 
-            [portfolio_id, product_type_id])
-        }
-    }
+        // Insert product types
+        await insertMany(body.product_types, 'product_type', 'product_type_name', 'product_type_id')
+
+        // Insert languages
+        await insertMany(body.languages, 'language', 'language_name', 'language_id')
 
     return portfolio_id
 }
+
 
 //Update a Portfolio By ID (Testing-Only)
 const updatePortfolio = async (body, portfolio_id) => {
