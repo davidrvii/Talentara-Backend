@@ -167,6 +167,7 @@ const createNewProject = async (body, user_id) => {
 
     try {
         const {
+            client_name,
             project_name,
             project_desc,
             start_date,
@@ -181,8 +182,8 @@ const createNewProject = async (body, user_id) => {
 
         // Insert project
         const [projectRes] = await conn.execute(
-            `INSERT INTO project (user_id, project_name, project_desc, start_date, end_date) VALUES (?, ?, ?, ?, ?)`,
-            [user_id, project_name, project_desc, start_date, end_date]
+            `INSERT INTO project (user_id, client_name, project_name, project_desc, start_date, end_date) VALUES (?, ?, ?, ?, ?)`,
+            [user_id, client_name, project_name, project_desc, start_date, end_date]
         );
 
         const project_id = projectRes.insertId;

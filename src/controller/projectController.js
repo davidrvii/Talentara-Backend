@@ -77,6 +77,7 @@ async function inviteTalent(project_id, role_name, role_amount, excludeIds = [])
 
 const createNewProject = async (req, res) => {
     const { 
+        client_name,
         project_name, 
         project_desc, 
         start_date, 
@@ -91,6 +92,7 @@ const createNewProject = async (req, res) => {
 
         // Persiapkan data untuk insert project
         const newProjectBody = {
+            client_name,
             project_name,
             project_desc: parsed.generated_desc,
             start_date,
