@@ -246,8 +246,11 @@ const updateProject = async (body, project_id) => {
         const {
             project_name,
             project_desc,
+            project_github,
+            meet_link,
             start_date,
             end_date,
+            user_target,
             tools,
             languages,
             product_types,
@@ -268,6 +271,14 @@ const updateProject = async (body, project_id) => {
             updateFields.push('project_desc = ?');
             updateValues.push(project_desc);
         }
+        if (project_github) {
+            updateFields.push('project_github = ?');
+            updateValues.push(project_github);
+        }
+        if (meet_link) {
+            updateFields.push('meet_link = ?');
+            updateValues.push(meet_link);
+        }
         if (start_date) {
             updateFields.push('start_date = ?');
             updateValues.push(start_date);
@@ -276,7 +287,10 @@ const updateProject = async (body, project_id) => {
             updateFields.push('end_date = ?');
             updateValues.push(end_date);
         }
-
+        if (user_target) {
+            updateFields.push('user_target = ?');
+            updateValues.push(user_target);
+        }
         if (updateFields.length > 0) {
             updateValues.push(project_id);
             const sqlQuery = `UPDATE project SET ${updateFields.join(', ')} WHERE project_id = ?`;
