@@ -28,7 +28,8 @@ const getTalentDetail = async (req, res) => {
 }
 
 const createNewTalent = async (req, res) => {
-    const { body, user_id } = req
+    const { body } = req
+    const user_id = req.userData.user_id
 
     try {
         await talentModel.createNewTalent(body, user_id)

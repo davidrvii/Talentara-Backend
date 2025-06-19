@@ -140,84 +140,63 @@ const getTalentDetail = (talent_id) => {
 
 //Create a New Talent
 const createNewTalent = async (body, user_id) => {
-    const conn = await dbPool.getConnection() 
-    await conn.beginTransaction() 
+    const conn = await dbPool.getConnection()
+    await conn.beginTransaction()
 
     try {
-        //Create a New Talent With The Same ID as User ID
-        const [talentRes] = await conn.execute(
+        // Create a New Talent With The Same ID as User ID
+        await conn.execute(
             `INSERT INTO talent (talent_id) VALUES (?)`,
             [user_id]
-        ) 
-        //Get a New Talent ID
-        const talent_id = talentRes.insertId
+        )
 
-        //insert talent's roles
-        for (const roleName of body.roles || []) {
-            const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', roleName)
-            if (role_id) {
-                await conn.execute(
-                `INSERT INTO talent_has_role (talent_id, role_id) VALUES (?, ?)`, 
-                [talent_id, role_id])
+        const talent_id = user_id  // PK = user_id
+
+        // Helper insert function
+        const insertMany = async (items, tableName, columnName, columnIdName) => {
+            for (const itemName of items || []) {
+                const id = await getOrCreateIdByName(tableName, columnName, columnIdName, itemName)
+                if (id) {
+                    await conn.execute(
+                        `INSERT INTO talent_has_${tableName} (talent_id, ${columnIdName}) VALUES (?, ?)`,
+                        [talent_id, id]
+                    )
+                }
             }
         }
 
-        //insert talent's tools
-        for (const toolName of body.tools || []) {
-            const tools_id = await getOrCreateIdByName('tools', 'tools_name', 'tools_id', toolName)
-            if (tools_id) {
-                await conn.execute(
-                `INSERT INTO talent_has_tools (talent_id, tools_id) VALUES (?, ?)`, 
-                [talent_id, tools_id])
-            }
-        }
+        // Insert roles
+        await insertMany(body.roles, 'role', 'role_name', 'role_id')
 
-        //insert talent's platforms
-        for (const platformName of body.platforms || []) {
-            const platform_id = await getOrCreateIdByName('platform', 'platform_name', 'platform_id', platformName)
-            if (platform_id) {
-                await conn.execute(
-                `INSERT INTO talent_has_platform (talent_id, platform_id) VALUES (?, ?)`, 
-                [talent_id, platform_id])
-            }
-        }   
+        // Insert tools
+        await insertMany(body.tools, 'tools', 'tools_name', 'tools_id')
 
-        //insert talent's product types
-        for (const productTypeName of body.product_types || []) {
-            const product_type_id = await getOrCreateIdByName('product_type', 'product_type_name', 'product_type_id', productTypeName)
-            if (product_type_id) {
-                await conn.execute(
-                `INSERT INTO talent_has_product_type (talent_id, product_type_id) VALUES (?, ?)`, 
-                [talent_id, product_type_id])
-            }
-        }
+        // Insert platforms
+        await insertMany(body.platforms, 'platform', 'platform_name', 'platform_id')
 
-        //insert talent's languages
-        for (const languageName of body.languages || []) {
-            const language_id = await getOrCreateIdByName('language', 'language_name', 'language_id', languageName)
-            if (language_id) {
-                await conn.execute(
-                `INSERT INTO talent_has_language (talent_id, language_id) VALUES (?, ?)`, 
-                [talent_id, language_id])
-            }
-        }
+        // Insert product types
+        await insertMany(body.product_types, 'product_type', 'product_type_name', 'product_type_id')
 
-        //Create Inputed Talent's Portfolios 
+        // Insert languages
+        await insertMany(body.languages, 'language', 'language_name', 'language_id')
+
+        // Insert portfolios
         for (const portfolio of body.portfolio || []) {
             await uploadPortfolio(conn, portfolio, talent_id)
         }
 
-        await conn.commit() 
-        conn.release() 
+        await conn.commit()
+        conn.release()
 
         return { success: true, message: 'Talent Registered Successfully' }
 
     } catch (error) {
         await conn.rollback()
-        conn.release() 
+        conn.release()
         throw error
     }
 }
+
 
 //Update a Talent By ID
 const updateTalent = async (body, talent_id) => {
