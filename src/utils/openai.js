@@ -58,8 +58,8 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
               ]
               }`
 
-          const completion =  await openai.createChatCompletion({
-                                  model: 'gpt-4',
+          const completion =  await openai.chat.completions.create({
+                                  model: 'gpt-4o',
                                   messages: [{ role: 'user', content: prompt }],
                                   temperature: 0.7
                               })
