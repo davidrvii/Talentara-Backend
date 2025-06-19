@@ -161,7 +161,6 @@ const getProjectOrder = (project_id) => {
     return dbPool.execute(sqlQuery, [project_id]);
 }
 
-//Create a New Project By User
 const createNewProject = async (body, user_id) => {
     const conn = await dbPool.getConnection();
     await conn.beginTransaction();
@@ -182,15 +181,13 @@ const createNewProject = async (body, user_id) => {
 
         // Insert project
         const [projectRes] = await conn.execute(
-            `INSERT INTO project 
-            (user_id, project_name, project_desc, start_date, end_date) 
-            VALUES (?, ?, ?, ?, ?)`,
+            `INSERT INTO project (user_id, project_name, project_desc, start_date, end_date) VALUES (?, ?, ?, ?, ?)`,
             [user_id, project_name, project_desc, start_date, end_date]
         );
 
         const project_id = projectRes.insertId;
 
-        // Insert project_has_role with amount
+        // Insert roles
         for (const { role_name, amount } of roles) {
             const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', role_name);
             if (role_id) {
@@ -201,41 +198,24 @@ const createNewProject = async (body, user_id) => {
             }
         }
 
-        // Insert other relations
-        for (const toolName of tools) {
-            const tool_id = await getOrCreateIdByName('tools', 'tools_name', 'tools_id', toolName);
-            if (tool_id) {
-                await conn.execute(`INSERT INTO project_has_tools (project_id, tools_id) VALUES (?, ?)`, [project_id, tool_id]);
+        // Helper insertMany
+        const insertMany = async (items, tableName, columnName, columnIdName) => {
+            for (const itemName of items) {
+                const id = await getOrCreateIdByName(tableName, columnName, columnIdName, itemName);
+                if (id) {
+                    await conn.execute(
+                        `INSERT INTO project_has_${tableName} (project_id, ${columnIdName}) VALUES (?, ?)`,
+                        [project_id, id]
+                    );
+                }
             }
-        }
+        };
 
-        for (const langName of languages) {
-            const lang_id = await getOrCreateIdByName('language', 'language_name', 'language_id', langName);
-            if (lang_id) {
-                await conn.execute(`INSERT INTO project_has_language (project_id, language_id) VALUES (?, ?)`, [project_id, lang_id]);
-            }
-        }
-
-        for (const typeName of product_types) {
-            const type_id = await getOrCreateIdByName('product_type', 'product_type_name', 'product_type_id', typeName);
-            if (type_id) {
-                await conn.execute(`INSERT INTO project_has_product_type (project_id, product_type_id) VALUES (?, ?)`, [project_id, type_id]);
-            }
-        }
-
-        for (const platformName of platforms) {
-            const platform_id = await getOrCreateIdByName('platform', 'platform_name', 'platform_id', platformName);
-            if (platform_id) {
-                await conn.execute(`INSERT INTO project_has_platform (project_id, platform_id) VALUES (?, ?)`, [project_id, platform_id]);
-            }
-        }
-
-        for (const featureName of features) {
-            const feature_id = await getOrCreateIdByName('feature', 'feature_name', 'feature_id', featureName);
-            if (feature_id) {
-                await conn.execute(`INSERT INTO project_has_feature (project_id, feature_id) VALUES (?, ?)`, [project_id, feature_id]);
-            }
-        }
+        await insertMany(tools, 'tools', 'tools_name', 'tools_id');
+        await insertMany(languages, 'language', 'language_name', 'language_id');
+        await insertMany(product_types, 'product_type', 'product_type_name', 'product_type_id');
+        await insertMany(platforms, 'platform', 'platform_name', 'platform_id');
+        await insertMany(features, 'feature', 'feature_name', 'feature_id');
 
         await conn.commit();
         conn.release();
@@ -247,7 +227,7 @@ const createNewProject = async (body, user_id) => {
         conn.release();
         throw err;
     }
-}
+};
 
 //Insert Talent Who Accept The Project
 const insertToProjectHasTalent = async (project_id, talent_id, role_name) => {
