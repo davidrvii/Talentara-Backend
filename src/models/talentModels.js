@@ -98,11 +98,7 @@ const getFilteredTalent = (role_name, excludeIds = []) => {
 const getTalentDetail = (talent_id) => {
     const sqlQuery = `
         SELECT 
-            t.talent_id,
-            t.talent_avg_rating,
-            t.project_done,
-            t.is_project_manager,
-            t.availability,
+            t.*,
             u.user_name,
             u.user_email,
             u.user_image,
@@ -238,7 +234,7 @@ const updateTalent = async (body, talent_id) => {
         if (updateTalentFields.length > 0) {
             const updateTalentSql = `
                 UPDATE talent
-                SET ${updateTalentFields.join(', ')}
+                SET ${updateTalentFields.join(', ')}, updated_at = CURRENT_TIMESTAMP
                 WHERE talent_id = ?
             `;
             await conn.execute(updateTalentSql, [talent_id]);
