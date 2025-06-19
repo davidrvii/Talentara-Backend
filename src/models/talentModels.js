@@ -197,8 +197,7 @@ const createNewTalent = async (body, user_id) => {
     }
 }
 
-
-//Update a Talent By ID
+//Update Talent
 const updateTalent = async (body, talent_id) => {
     const conn = await dbPool.getConnection();
     await conn.beginTransaction();
@@ -209,77 +208,79 @@ const updateTalent = async (body, talent_id) => {
             languages,
             tools,
             product_types,
-            platforms
+            platforms,
+            is_project_manager,
+            project_done,
+            is_on_project,
+            talent_avg_rating,
+            availability
         } = body;
 
-        // Update roles if provided
+        // Update main talent table fields if provided
+        const updateTalentFields = [];
+
+        if (typeof is_project_manager !== 'undefined') {
+            updateTalentFields.push(`is_project_manager = ${conn.escape(is_project_manager)}`);
+        }
+        if (typeof project_done !== 'undefined') {
+            updateTalentFields.push(`project_done = ${conn.escape(project_done)}`);
+        }
+        if (typeof is_on_project !== 'undefined') {
+            updateTalentFields.push(`is_on_project = ${conn.escape(is_on_project)}`);
+        }
+        if (typeof talent_avg_rating !== 'undefined') {
+            updateTalentFields.push(`talent_avg_rating = ${conn.escape(talent_avg_rating)}`);
+        }
+        if (typeof availability !== 'undefined') {
+            updateTalentFields.push(`availability = ${conn.escape(availability)}`);
+        }
+
+        if (updateTalentFields.length > 0) {
+            const updateTalentSql = `
+                UPDATE talent
+                SET ${updateTalentFields.join(', ')}
+                WHERE talent_id = ?
+            `;
+            await conn.execute(updateTalentSql, [talent_id]);
+        }
+
+        // Helper to update many-to-many fields
+        const updateMany = async (items, tableName, columnName, columnIdName) => {
+            await conn.execute(`DELETE FROM talent_has_${tableName} WHERE talent_id = ?`, [talent_id]);
+            for (const itemName of items || []) {
+                const id = await getOrCreateIdByName(tableName, columnName, columnIdName, itemName);
+                if (id) {
+                    await conn.execute(
+                        `INSERT INTO talent_has_${tableName} (talent_id, ${columnIdName}) VALUES (?, ?)`,
+                        [talent_id, id]
+                    );
+                }
+            }
+        };
+
+        // Update roles
         if (Array.isArray(roles)) {
-            await conn.execute(`DELETE FROM talent_has_role WHERE talent_id = ?`, [talent_id]);
-            for (const roleName of roles) {
-                const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', roleName);
-                if (role_id) {
-                    await conn.execute(
-                        `INSERT INTO talent_has_role (talent_id, role_id) VALUES (?, ?)`,
-                        [talent_id, role_id]
-                    );
-                }
-            }
+            await updateMany(roles, 'role', 'role_name', 'role_id');
         }
 
-        // Update languages if provided
+        // Update languages
         if (Array.isArray(languages)) {
-            await conn.execute(`DELETE FROM talent_has_language WHERE talent_id = ?`, [talent_id]);
-            for (const languageName of languages) {
-                const language_id = await getOrCreateIdByName('language', 'language_name', 'language_id', languageName);
-                if (language_id) {
-                    await conn.execute(
-                        `INSERT INTO talent_has_language (talent_id, language_id) VALUES (?, ?)`,
-                        [talent_id, language_id]
-                    );
-                }
-            }
+            await updateMany(languages, 'language', 'language_name', 'language_id');
         }
 
-        // Update tools if provided
+        // Update tools
         if (Array.isArray(tools)) {
-            await conn.execute(`DELETE FROM talent_has_tools WHERE talent_id = ?`, [talent_id]);
-            for (const toolName of tools) {
-                const tool_id = await getOrCreateIdByName('tools', 'tools_name', 'tools_id', toolName);
-                if (tool_id) {
-                    await conn.execute(
-                        `INSERT INTO talent_has_tools (talent_id, tools_id) VALUES (?, ?)`,
-                        [talent_id, tool_id]
-                    );
-                }
-            }
+            await updateMany(tools, 'tools', 'tools_name', 'tools_id');
         }
 
-        // Update product types if provided
+        // Update product types
         if (Array.isArray(product_types)) {
-            await conn.execute(`DELETE FROM talent_has_product_type WHERE talent_id = ?`, [talent_id]);
-            for (const typeName of product_types) {
-                const type_id = await getOrCreateIdByName('product_type', 'product_type_name', 'product_type_id', typeName);
-                if (type_id) {
-                    await conn.execute(
-                        `INSERT INTO talent_has_product_type (talent_id, product_type_id) VALUES (?, ?)`,
-                        [talent_id, type_id]
-                    );
-                }
-            }
+            await updateMany(product_types, 'product_type', 'product_type_name', 'product_type_id');
         }
 
-        // Update platforms if provided
+        // Update platforms
         if (Array.isArray(platforms)) {
-            await conn.execute(`DELETE FROM talent_has_platform WHERE talent_id = ?`, [talent_id]);
-            for (const platformName of platforms) {
-                const platform_id = await getOrCreateIdByName('platform', 'platform_name', 'platform_id', platformName);
-                if (platform_id) {
-                    await conn.execute(
-                        `INSERT INTO talent_has_platform (talent_id, platform_id) VALUES (?, ?)`,
-                        [talent_id, platform_id]
-                    );
-                }
-            }
+            await updateMany(platforms, 'platform', 'platform_name', 'platform_id');
         }
 
         await conn.commit();
@@ -293,6 +294,7 @@ const updateTalent = async (body, talent_id) => {
         throw err;
     }
 }
+
 
 const updateTalentDeclineCount = async (talent_id) => {
     const sqlQuery = `
