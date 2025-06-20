@@ -99,12 +99,12 @@ const createNewProject = async (req, res) => {
             project_desc: parsed.generated_desc,
             start_date,
             end_date,
-            platform: parsed.platforms,
-            product_type: parsed.product_types,
-            role: parsed.roles,
-            language: parsed.languages,
+            platforms: parsed.platforms,
+            product_types: parsed.product_types,
+            roles: parsed.roles,
+            languages: parsed.languages,
             tools: parsed.tools,
-            feature: parsed.features,
+            features: parsed.features,
         }
     
         // Insert project

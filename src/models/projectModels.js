@@ -258,51 +258,51 @@ const updateProject = async (body, project_id) => {
             platforms,
             features,
             roles
-        } = body;
+        } = body
 
         // Update main project fields
-        const updateFields = [];
-        const updateValues = [];
+        const updateFields = []
+        const updateValues = []
 
         if (project_name) {
-            updateFields.push('project_name = ?');
-            updateValues.push(project_name);
+            updateFields.push('project_name = ?')
+            updateValues.push(project_name)
         }
         if (project_desc) {
-            updateFields.push('project_desc = ?');
-            updateValues.push(project_desc);
+            updateFields.push('project_desc = ?')
+            updateValues.push(project_desc)
         }
         if (project_github) {
-            updateFields.push('project_github = ?');
-            updateValues.push(project_github);
+            updateFields.push('project_github = ?')
+            updateValues.push(project_github)
         }
         if (meet_link) {
-            updateFields.push('meet_link = ?');
-            updateValues.push(meet_link);
+            updateFields.push('meet_link = ?')
+            updateValues.push(meet_link)
         }
         if (start_date) {
-            updateFields.push('start_date = ?');
-            updateValues.push(start_date);
+            updateFields.push('start_date = ?')
+            updateValues.push(start_date)
         }
         if (end_date) {
-            updateFields.push('end_date = ?');
-            updateValues.push(end_date);
+            updateFields.push('end_date = ?')
+            updateValues.push(end_date)
         }
         if (user_target) {
-            updateFields.push('user_target = ?');
-            updateValues.push(user_target);
+            updateFields.push('user_target = ?')
+            updateValues.push(user_target)
         }
         if (updateFields.length > 0) {
-            updateValues.push(project_id);
-            const sqlQuery = `UPDATE project SET ${updateFields.join(', ')} WHERE project_id = ?`;
-            await conn.execute(sqlQuery, updateValues);
+            updateValues.push(project_id)
+            const sqlQuery = `UPDATE project SET ${updateFields.join(', ')} WHERE project_id = ?`
+            await conn.execute(sqlQuery, updateValues)
         }
 
         // Helper function for many-to-many tables
         const updateMany = async (items, tableName, nameCol, idCol) => {
-            await conn.execute(`DELETE FROM project_has_${tableName} WHERE project_id = ?`, [project_id]);
+            await conn.execute(`DELETE FROM project_has_${tableName} WHERE project_id = ?`, [project_id])
             for (const itemName of items || []) {
-                const id = await getOrCreateIdByName(tableName, nameCol, idCol, itemName);
+                const id = await getOrCreateIdByName(tableName, nameCol, idCol, itemName)
                 if (id) {
                     await conn.execute(
                         `INSERT INTO project_has_${tableName} (project_id, ${idCol}) VALUES (?, ?)`,
@@ -314,53 +314,53 @@ const updateProject = async (body, project_id) => {
 
         // Update tools
         if (Array.isArray(tools)) {
-            await updateMany(tools, 'tools', 'tools_name', 'tools_id');
+            await updateMany(tools, 'tools', 'tools_name', 'tools_id')
         }
 
         // Update languages
         if (Array.isArray(languages)) {
-            await updateMany(languages, 'language', 'language_name', 'language_id');
+            await updateMany(languages, 'language', 'language_name', 'language_id')
         }
 
         // Update product types
         if (Array.isArray(product_types)) {
-            await updateMany(product_types, 'product_type', 'product_type_name', 'product_type_id');
+            await updateMany(product_types, 'product_type', 'product_type_name', 'product_type_id')
         }
 
         // Update platforms
         if (Array.isArray(platforms)) {
-            await updateMany(platforms, 'platform', 'platform_name', 'platform_id');
+            await updateMany(platforms, 'platform', 'platform_name', 'platform_id')
         }
 
         // Update features
         if (Array.isArray(features)) {
-            await updateMany(features, 'feature', 'feature_name', 'feature_id');
+            await updateMany(features, 'feature', 'feature_name', 'feature_id')
         }
 
         // Update roles
         if (Array.isArray(roles)) {
-            await conn.execute(`DELETE FROM project_has_role WHERE project_id = ?`, [project_id]);
+            await conn.execute(`DELETE FROM project_has_role WHERE project_id = ?`, [project_id])
             for (const { role_name, amount } of roles || []) {
-                const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', role_name);
+                const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', role_name)
                 if (role_id) {
                     await conn.execute(
                         `INSERT INTO project_has_role (project_id, role_id, role_amount) VALUES (?, ?, ?)`,
                         [project_id, role_id, amount]
-                    );
+                    )
                 }
             }
         }
 
-        await conn.commit();
-        conn.release();
-        return { success: true, message: 'Project updated successfully' };
+        await conn.commit()
+        conn.release()
+        return { success: true, message: 'Project updated successfully' }
 
     } catch (err) {
-        await conn.rollback();
-        conn.release();
-        throw err;
+        await conn.rollback()
+        conn.release()
+        throw err
     }
-};
+}
 
 
 //Delete a Project By ID (Testing-Only)
