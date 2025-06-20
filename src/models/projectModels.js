@@ -233,11 +233,28 @@ const createNewProject = async (body, user_id) => {
 
 //Insert Talent Who Accept The Project
 const insertToProjectHasTalent = async (project_id, talent_id, role_name) => {
-    const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', role_name);
+    const conn = await dbPool.getConnection()
+    await conn.beginTransaction()
+
+    try {
+        const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', role_name)
         if (role_id) {
-            await conn.execute(`INSERT INTO project_has_talent (project_id, talent_id, role_id) VALUES (?, ?, ?)`, [project_id, talent_id, role_id])
+            await conn.execute(
+                `INSERT INTO project_has_talent (project_id, talent_id, role_id) VALUES (?, ?, ?)`,
+                [project_id, talent_id, role_id]
+            )
         }
+
+        await conn.commit()
+        conn.release()
+
+    } catch (err) {
+        await conn.rollback()
+        conn.release()
+        throw err
+    }
 }
+
 
 const updateProject = async (body, project_id) => {
     const conn = await dbPool.getConnection();
