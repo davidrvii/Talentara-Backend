@@ -169,7 +169,7 @@ const respondToProjectOffer = async (req, res) => {
 
         if (!accept) {
             // Decline: retry invite for declined role
-            await inviteTalent(project_id, role_name, role.required_amount, [talent_id])
+            await inviteTalent(project_id, role_name, role.role_amount, [talent_id])
             return response(200, { accepted: false }, 'Talent Declined and Retrying Invite', res)
         }
 
