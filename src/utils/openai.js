@@ -79,17 +79,26 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
               console.log(`Trying model: ${model}`)
               const completion = await callChatCompletion(model, prompt)
               const content = completion.choices[0].message.content
+
+          // Cleaner → remove backtick ` or block code
+          content = content.trim()
+          if (content.startsWith("```json")) {
+              content = content.replace(/```json/, "").replace(/```/, "").trim()
+          } else if (content.startsWith("```")) {
+              content = content.replace(/```/, "").replace(/```/, "").trim()
+          }
+
               const parsed = JSON.parse(content)
               return parsed
             } catch (error) {
               console.error(`Error with model ${model}:`, error.message);
-              lastError = err
+              lastError = error
               if (error.status === 429 || error.message.includes('quota')) {
                 // Fallback to another model
                 continue
               } else {
                 // If ain't quota error, just stop
-                throw err
+                throw error
               }
             }
           }
