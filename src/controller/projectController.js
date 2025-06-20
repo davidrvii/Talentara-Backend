@@ -163,7 +163,9 @@ const respondToProjectOffer = async (req, res) => {
 
     try {
         const requiredRoles = await projectModel.getProjectRoleRequirement(project_id)
+        console.log(requiredRoles)
         const role = requiredRoles.find(r => r.role_name === role_name)
+        console.log(role)
         const countRoles = await projectModel.countAcceptedTalentsByRole(project_id)
         const count = countRoles.find(r => r.role_name === role_name)
 
