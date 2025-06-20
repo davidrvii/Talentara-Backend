@@ -85,7 +85,7 @@ const createNewProject = async (req, res) => {
     } = req.body
     const user_id = req.userData.user_id
     try {
-        const parsed = await generateProjectAnalysis(project_desc, start_date, end_date)
+        const parsed = await generateProjectAnalysis({project_desc, start_date, end_date})
         if (!parsed) {
             return response(500, {}, 'Error generating project analysis', res)
         }       

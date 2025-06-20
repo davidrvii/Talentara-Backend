@@ -78,15 +78,14 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
             try {
               console.log(`Trying model: ${model}`)
               const completion = await callChatCompletion(model, prompt)
-              const content = completion.choices[0].message.content
+              let content = (completion.choices[0].message.content).trim()
 
-          // Cleaner → remove backtick ` or block code
-          content = content.trim()
-          if (content.startsWith("```json")) {
-              content = content.replace(/```json/, "").replace(/```/, "").trim()
-          } else if (content.startsWith("```")) {
-              content = content.replace(/```/, "").replace(/```/, "").trim()
-          }
+              // Cleaner → remove backtick ` or block code
+              if (content.startsWith("```json")) {
+                  content = content.replace(/```json/, "").replace(/```/, "").trim()
+              } else if (content.startsWith("```")) {
+                  content = content.replace(/```/, "").replace(/```/, "").trim()
+              }
 
               const parsed = JSON.parse(content)
               return parsed
