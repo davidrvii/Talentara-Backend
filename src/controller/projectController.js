@@ -174,7 +174,7 @@ const respondToProjectOffer = async (req, res) => {
         }
 
         // Talent Late Accept Handling
-        if (count >= role.required_amount) {
+        if (count >= role.role_amount) {
             await sendPushNotification(talent_id, { type: 'TEAM_FULL', project_id, role_name })
             return response(200, { accepted: false, message: 'Team already full' }, 'Team Already Full', res)
         }
