@@ -71,7 +71,7 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
                   Output hanya dalam JSON sesuai format di atas.
                 `
 
-          let modelsToTry = ['gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo']
+          let modelsToTry = ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo']
           let lastError = null
 
           for (let model of modelsToTry) {
