@@ -183,7 +183,7 @@ const createNewProject = async (body, user_id) => {
 
         // Insert project
         const [projectRes] = await conn.execute(
-            `INSERT INTO project (user_id, status_id, client_name, project_name, project_desc, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)`,
+            `INSERT INTO project (user_id, status_id, client_name, project_name, project_desc, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [user_id, status_id, client_name, project_name, project_desc, start_date, end_date]
         );
 
