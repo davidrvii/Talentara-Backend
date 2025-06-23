@@ -484,10 +484,10 @@ const countAcceptedTalentsByRole = (project_id) => {
     return dbPool.execute(sqlQuery, [project_id])
 }
 
-const updateProjectStatus = (project_id, status) => {
-    const sqlQuery = `UPDATE project SET status = ? WHERE project_id = ?`
+const updateProjectStatus = (project_id, status_id) => {
+    const sqlQuery = `UPDATE project SET status_id = ? WHERE project_id = ?`
 
-    return dbPool.execute(sqlQuery, [project_id, status])
+    return dbPool.execute(sqlQuery, [project_id, status_id])
 }
 
 module.exports = {

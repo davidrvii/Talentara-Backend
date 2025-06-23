@@ -208,7 +208,7 @@ const respondToProjectOffer = async (req, res) => {
         })
 
         if (allFulfilled) {
-            await projectModel.updateProjectStatus(project_id, 'in_progress')
+            await projectModel.updateProjectStatus(project_id, 3)
             const team = await projectModel.getFullTeam(project_id)
             await Promise.all(
                 team.map(t => sendPushNotification(t.id, { type: 'PROJECT_STARTED', project_id }))
