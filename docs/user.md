@@ -42,6 +42,7 @@
     "message": "User Login Success",
     "timestamp": "2025-06-18T14:59:43.450Z",
     "loginResult": {
+        "user_id" : 1
         "user_email": "davxxxxxxxxxxxxxil.com",
         "user_password": "daxxxxxxi",
         "token": "eyJhbGciOixxxxxxxxxxxxxxxxxxxD2SY"

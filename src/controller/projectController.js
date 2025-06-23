@@ -62,6 +62,23 @@ const getProjectDetail = async (req, res) => {
     }
 }
 
+const getCurrentProject = async (req, res) => {
+    const { id } = req.params
+
+    try {
+        const [project] = await projectModel.getCurrentProject(id)
+        if (project.length === 0) {
+            return response(404, {currentProject: null}, 'Get Current Project: Project Not Found', res)
+        } else {
+            response(200, {currentProject: project}, 'Get Current Project Success', res)
+        }
+    } catch (error) {
+        response(500, {error: error}, 'Get Current Project: Server Error', res)
+        throw error
+    }
+}
+
+
 async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
     //Cari kandidat terurut berdasarkan skor kecocokan
     const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
@@ -223,6 +240,7 @@ module.exports = {
     getAllProjectHistory,
     getProjectOrder,
     getProjectDetail,
+    getCurrentProject,
     createNewProject,
     updateProject,
     respondToProjectOffer,

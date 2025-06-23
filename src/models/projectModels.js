@@ -161,6 +161,19 @@ const getProjectOrder = (project_id) => {
     return dbPool.execute(sqlQuery, [project_id]);
 }
 
+const getCurrentProject = (user_id) => {
+    const sqlQuery = `
+        SELECT * FROM project
+        WHERE user_id = ?
+        AND status_id IN (1, 2, 3)
+        ORDER BY start_date ASC
+        LIMIT 1
+    `;
+
+    return dbPool.execute(sqlQuery, [user_id]);
+};
+
+
 const createNewProject = async (body, user_id) => {
     const conn = await dbPool.getConnection();
     await conn.beginTransaction();

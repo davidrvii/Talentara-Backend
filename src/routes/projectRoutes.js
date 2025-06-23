@@ -10,6 +10,8 @@ router.get('/order/:id', authentication, projectController.getProjectOrder)
 
 router.get('/detail/:id', authentication, projectController.getProjectDetail)
 
+router.get('/current/:id', authentication, authorization, projectController.getCurrentProject)
+
 router.post('/add', authentication, authorization, projectController.createNewProject)
 
 router.patch('/update/:id', authentication, authorization, projectController.updateProject)

@@ -77,11 +77,12 @@ const userLogin = async (req, res) => {
             return response(401, {loginResult: null}, 'User Login: Invalid Password', res)
         }
 
+        const user_id = user.user_id
         const user_name = user.user_name
 
         const token = generateToken({user_id: user.user_id, user_email: user.user_email})
 
-        response(200, {loginResult: {user_email, user_name, token}}, 'User Login Success', res)
+        response(200, {loginResult: {user_id, user_email, user_name, token}}, 'User Login Success', res)
     } catch (error) {
         response(500, {error: error}, 'User Login: Server Error', res)
         throw error
