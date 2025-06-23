@@ -153,6 +153,7 @@ const getCurrentProject = (user_id) => {
             p.project_id,
             p.project_name,
             p.client_name,
+            p.start_date,
             p.end_date,
             s.status_name,
             GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
