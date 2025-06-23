@@ -17,9 +17,9 @@ const getHistoryNotification = async (req, res) => {
     try {
         const [notification] = await notificationModel.getHistoryNotification(id)
         if (notification.length === 0) {
-            return response(404, {notificationDetail: null}, 'Get History Notification: Timeline Not Found', res)
+            return response(404, {notificationHistory: null}, 'Get History Notification: Timeline Not Found', res)
         } else {
-            response(200, {notificationDetail: notification}, 'Get History Notification Success', res)
+            response(200, {notificationHistory: notification}, 'Get History Notification Success', res)
         }
     } catch (error) {
         response(500, {error: error}, 'Get History Notification: Server Error', res)
