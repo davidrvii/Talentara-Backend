@@ -163,15 +163,30 @@ const getProjectOrder = (project_id) => {
 
 const getCurrentProject = (user_id) => {
     const sqlQuery = `
-        SELECT * FROM project
-        WHERE user_id = ?
-        AND status_id IN (1, 2, 3)
-        ORDER BY start_date ASC
+        SELECT 
+            p.project_id,
+            p.project_name,
+            p.client_name,
+            p.end_date,
+            s.status_name,
+            GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
+            GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms
+        FROM project p
+        JOIN status s ON p.status_id = s.status_id
+        LEFT JOIN project_has_product_type ppt ON p.project_id = ppt.project_id
+        LEFT JOIN product_type pt ON ppt.product_type_id = pt.product_type_id
+        LEFT JOIN project_has_platform pp ON p.project_id = pp.project_id
+        LEFT JOIN platform pf ON pp.platform_id = pf.platform_id
+        WHERE p.user_id = ?
+        AND p.status_id IN (1, 2, 3)
+        GROUP BY p.project_id
+        ORDER BY p.start_date ASC
         LIMIT 1
-    `;
+    `
 
-    return dbPool.execute(sqlQuery, [user_id]);
-};
+    return dbPool.execute(sqlQuery, [user_id])
+}
+
 
 
 const createNewProject = async (body, user_id) => {
