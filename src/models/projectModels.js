@@ -45,40 +45,22 @@ const getAllProject = () => {
 const getAllProjectHistory = (talent_id) => {
     const sqlQuery = `
         SELECT 
-            p.*,
-            GROUP_CONCAT(DISTINCT CONCAT(u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents,
-            GROUP_CONCAT(DISTINCT t.tools_name SEPARATOR '|') AS tools,
-            GROUP_CONCAT(DISTINCT l.language_name SEPARATOR '|') AS languages,
+            p.project_id,
+            p.project_name,
+            p.client_name,
+            p.end_date,
+            s.status_name,
             GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
-            GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms,
-            GROUP_CONCAT(DISTINCT f.feature_name SEPARATOR '|') AS features
+            GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms
         FROM project p
-
-        LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
-        LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
-        LEFT JOIN user u ON tlt.talent_id = u.user_id
-
-        LEFT JOIN role r ON pht.role_id = r.role_id
-
-        LEFT JOIN project_has_tools pht2 ON p.project_id = pht2.project_id
-        LEFT JOIN tools t ON pht2.tools_id = t.tools_id
-
-        LEFT JOIN project_has_language pl ON p.project_id = pl.project_id
-        LEFT JOIN language l ON pl.language_id = l.language_id
-
+        JOIN status s ON p.status_id = s.status_id
         LEFT JOIN project_has_product_type ppt ON p.project_id = ppt.project_id
         LEFT JOIN product_type pt ON ppt.product_type_id = pt.product_type_id
-
         LEFT JOIN project_has_platform pp ON p.project_id = pp.project_id
         LEFT JOIN platform pf ON pp.platform_id = pf.platform_id
-
-        LEFT JOIN project_has_feature phf ON p.project_id = phf.project_id
-        LEFT JOIN feature f ON phf.feature_id = f.feature_id
-
-        WHERE p.project_id IN (
-            SELECT project_id FROM project_has_talent WHERE talent_id = ?
-        )
-        GROUP BY p.project_id`
+        WHERE p.user_id = ?
+        GROUP BY p.project_id
+        ORDER BY p.start_date ASC`
 
     return dbPool.execute(sqlQuery, [talent_id])
 }
