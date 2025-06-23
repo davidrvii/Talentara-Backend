@@ -70,6 +70,7 @@ const getProjectDetail = (project_id) => {
     const sqlQuery = `
         SELECT 
             p.*,
+            s.status_name,
             GROUP_CONCAT(DISTINCT CONCAT(u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents,
             GROUP_CONCAT(DISTINCT t.tools_name SEPARATOR '|') AS tools,
             GROUP_CONCAT(DISTINCT l.language_name SEPARATOR '|') AS languages,
@@ -77,6 +78,8 @@ const getProjectDetail = (project_id) => {
             GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms,
             GROUP_CONCAT(DISTINCT f.feature_name SEPARATOR '|') AS features
         FROM project p
+
+        JOIN status s ON p.status_id = s.status_id
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
