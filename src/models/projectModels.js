@@ -48,7 +48,8 @@ const getAllProjectHistory = (talent_id) => {
             p.project_id,
             p.project_name,
             p.client_name,
-            p.end_date,
+            p.start_date
+            p.completed_date,
             s.status_name,
             GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
             GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms
