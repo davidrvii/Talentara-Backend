@@ -480,6 +480,7 @@ module.exports = {
     getAllProjectHistory,
     getProjectDetail,
     getProjectOrder,
+    getCurrentProject,
     createNewProject,
     insertToProjectHasTalent,
     updateProject,
