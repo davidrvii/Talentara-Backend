@@ -135,10 +135,11 @@ const createNewPortfolio = async (body, talent_id) => {
 //Create a New Portfolio
 const uploadPortfolio = async (conn, body, talent_id) => {
     const [portfolioRes] = await conn.execute(
-        `INSERT INTO portfolio (talent_id, portfolio_name, portfolio_linkedin, portfolio_github, portfolio_desc, portfolio_label, start_date, end_date)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO portfolio (talent_id, client_name, portfolio_name, portfolio_linkedin, portfolio_github, portfolio_desc, portfolio_label, start_date, end_date)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             talent_id,
+            body.client_name,
             body.portfolio_name,
             body.portfolio_linkedin,
             body.portfolio_github,
