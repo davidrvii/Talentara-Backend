@@ -289,7 +289,6 @@ module.exports = {
     getAllPortfolio,
     getAllTalentPortfolio,
     getPortfolioDetail,
-    getOrCreateIdByName,
     createNewPortfolio,
     uploadPortfolio,
     updatePortfolio,
