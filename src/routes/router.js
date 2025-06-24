@@ -6,6 +6,7 @@ const projectRoutes = require('./projectRoutes')
 const notificationRoutes = require('./notificationRoutes')
 const timelineRoutes = require('./timelineRoutes')
 const portfolioRoutes = require('./portfolioRoutes')
+const categoriesRoutes = require('./categoriesRoutes')
 
 router.get('/', (req, res) => {
     res.status(200).send("Welcome to Talentara API")
