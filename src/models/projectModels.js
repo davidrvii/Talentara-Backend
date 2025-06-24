@@ -72,7 +72,7 @@ const getProjectDetail = (project_id) => {
         SELECT 
             p.*,
             s.status_name,
-            GROUP_CONCAT(DISTINCT CONCAT(u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents,
+            GROUP_CONCAT(DISTINCT CONCAT(tlt.talent_id, ':', u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents
             GROUP_CONCAT(DISTINCT t.tools_name SEPARATOR '|') AS tools,
             GROUP_CONCAT(DISTINCT l.language_name SEPARATOR '|') AS languages,
             GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
