@@ -20,5 +20,6 @@ router.use('/project', projectRoutes)
 router.use('/notification', notificationRoutes)
 router.use('/timeline', timelineRoutes)
 router.use('/portfolio', portfolioRoutes)
+router.use('/categories', categoriesRoutes)
 
 module.exports = router

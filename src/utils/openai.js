@@ -1,5 +1,5 @@
 const OpenAI = require('openai')
-const projectModel = require('../models/projectModels')
+const categoriesModel = require('../models/categoriesModels')
 require('dotenv').config();
 
 const openai = new OpenAI({
@@ -19,12 +19,12 @@ async function callChatCompletion(model, prompt) {
 const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => {
   try {
     //Fetch Categories From Database
-    const [platforms] = await projectModel.getAllPlatform()
-    const [productTypes] = await projectModel.getAllProductType()
-    const [roles] = await projectModel.getAllRole()
-    const [languages] = await projectModel.getAllLanguage()
-    const [tools] = await projectModel.getAllTools()
-    const [features] = await projectModel.getAllFeatures()
+    const [platforms] = await categoriesModel.getAllPlatform()
+    const [productTypes] = await categoriesModel.getAllProductType()
+    const [roles] = await categoriesModel.getAllRole()
+    const [languages] = await categoriesModel.getAllLanguage()
+    const [tools] = await categoriesModel.getAllTools()
+    const [features] = await categoriesModel.getAllFeatures()
 
     //Set list as text for prompting
     const platformList = platforms.map(p => p.platform_name).join(', ')

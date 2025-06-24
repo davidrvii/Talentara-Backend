@@ -7,7 +7,7 @@ const { findRecommendedTalent } = require('../utils/ncf')
 const getAllProject = async (req, res) => {
     try {
         const [projects] = await projectModel.getAllProject()
-        response(200, {projects: projects}, 'Get All Project', res)
+        response(200, {projects: projects}, 'Get All Project Success', res)
     } catch (error) {
         response(500, {error: error}, 'Get All Project: Server Error', res)
         throw error

@@ -1,5 +1,5 @@
 const dbPool = require('../config/database')
-const {  getOrCreateIdByName } = require('../models/portfolioModels')
+const {  getOrCreateIdByName } = require('../models/categoriesModels')
 
 // Get All Project From Database (Testing-Only)
 const getAllProject = () => {
@@ -402,42 +402,6 @@ const deleteProject = (project_id) => {
     return dbPool.execute(sqlQuery, [project_id])
 }
 
-const getAllPlatform = () => {
-    const sqlQuery = `SELECT platform_name FROM platform`
-
-    return dbPool.execute(sqlQuery)
-}
-
-const getAllProductType = () => {
-    const sqlQuery = `SELECT product_type_name FROM product_type`
-
-    return dbPool.execute(sqlQuery)
-}
-
-const getAllRole = () => {
-    const sqlQuery = `SELECT role_name FROM role`
-
-    return dbPool.execute(sqlQuery)
-}
-
-const getAllLanguage = () => {
-    const sqlQuery = `SELECT language_name FROM language`
-
-    return dbPool.execute(sqlQuery)
-}
-
-const getAllTools = () => {
-    const sqlQuery = `SELECT tools_name FROM tools`
-
-    return dbPool.execute(sqlQuery)
-}
-
-const getAllFeatures = () => {
-    const sqlQuery = `SELECT feature_name FROM feature`
-
-    return dbPool.execute(sqlQuery)
-}
-
 const getProjectRoleRequirement = (project_id) => {
     const sqlQuery =   `
         SELECT 
@@ -486,12 +450,6 @@ module.exports = {
     insertToProjectHasTalent,
     updateProject,
     deleteProject,
-    getAllPlatform,
-    getAllProductType,
-    getAllRole,
-    getAllLanguage,
-    getAllTools,
-    getAllFeatures,
     getProjectRoleRequirement,
     countAcceptedTalentsByRole,
     updateProjectStatus

@@ -1,5 +1,6 @@
 const dbPool = require('../config/database')
-const { uploadPortfolio, getOrCreateIdByName } = require('../models/portfolioModels')
+const { uploadPortfolio } = require('../models/portfolioModels')
+const {  getOrCreateIdByName } = require('../models/categoriesModels')
 
 //Get All Talent From Database (Testing-Only)
 const getAllTalent = () => {

@@ -1,4 +1,5 @@
 const dbPool = require('../config/database')
+const categoriesModel = require('../models/categoriesModels')
 
 //Get All Portfolio From Database (Testing-Only)
 const getAllPortfolio = () => {
@@ -110,25 +111,6 @@ const getPortfolioDetail = (portfolio_id) => {
     return dbPool.execute(sqlQuery, [portfolio_id])
 }
 
-//Capitalize every first letter of words
-const capitalizeWords = (str) => str.replace(/\b\w/g, char => char.toUpperCase()).trim()
-
-//Get ID from name or insert new record if not found
-const getOrCreateIdByName = async (table, nameCol, idCol, value) => {
-    if (!value || typeof value !== 'string' || value.trim() === '') return null
-
-    const formattedValue = capitalizeWords(value);
-
-    const selectQuery = `SELECT ${idCol} FROM ${table} WHERE ${nameCol} = ?`;
-    const [rows] = await dbPool.execute(selectQuery, [formattedValue]);
-
-    if (rows.length > 0) return rows[0][idCol];
-
-    // Insert if not found
-    const insertQuery = `INSERT INTO ${table} (${nameCol}) VALUES (?)`;
-    const [insertRes] = await dbPool.execute(insertQuery, [formattedValue]);
-    return insertRes.insertId;
-}
 
 //Talent Input a Portfolio
 const createNewPortfolio = async (body, talent_id) => {
@@ -171,7 +153,7 @@ const uploadPortfolio = async (conn, body, talent_id) => {
     // Helper insert function
     const insertMany = async (items, tableName, columnName, columnIdName) => {
         for (const itemName of items || []) {
-            const id = await getOrCreateIdByName(tableName, columnName, columnIdName, itemName)
+            const id = await categoriesModel.getOrCreateIdByName(tableName, columnName, columnIdName, itemName)
             if (id) {
                 await conn.execute(
                     `INSERT INTO portfolio_has_${tableName} (portfolio_id, ${columnIdName}) VALUES (?, ?)`,
@@ -248,70 +230,41 @@ const updatePortfolio = async (body, portfolio_id) => {
             await conn.execute(sqlQuery, updateValues)
         }
 
-        // Update tools
+        const updateMany = async (items, tableName, columnName, columnIdName) => {
+            await conn.execute(`DELETE FROM portfolio_has_${tableName} WHERE portfolio_id = ?`, [portfolio_id])
+            for (const itemName of items || []) {
+                const id = await categoriesModel.getOrCreateIdByName(tableName, columnName, columnIdName, itemName)
+                if (id) {
+                    await conn.execute(
+                        `INSERT INTO portfolio_has_${tableName} (portfolio_id, ${columnIdName}) VALUES (?, ?)`,
+                        [portfolio_id, id]
+                    )
+                }
+            }
+        }
+
         if (Array.isArray(tools)) {
-            await conn.execute(`DELETE FROM portfolio_has_tools WHERE portfolio_id = ?`, [portfolio_id])
-            for (const toolName of tools) {
-                const tool_id = await getOrCreateIdByName('tools', 'tools_name', 'tools_id', toolName)
-                if (tool_id) {
-                    await conn.execute(`INSERT INTO portfolio_has_tools (portfolio_id, tools_id) VALUES (?, ?)`, [portfolio_id, tool_id])
-                }
-            }
+            await updateMany(tools, 'tools', 'tools_name', 'tools_id')
         }
 
-        // Update languages
         if (Array.isArray(languages)) {
-            await conn.execute(`DELETE FROM portfolio_has_language WHERE portfolio_id = ?`, [portfolio_id])
-            for (const langName of languages) {
-                const lang_id = await getOrCreateIdByName('language', 'language_name', 'language_id', langName)
-                if (lang_id) {
-                    await conn.execute(`INSERT INTO portfolio_has_language (portfolio_id, language_id) VALUES (?, ?)`, [portfolio_id, lang_id])
-                }
-            }
+            await updateMany(languages, 'language', 'language_name', 'language_id')
         }
 
-        // Update product types
         if (Array.isArray(product_types)) {
-            await conn.execute(`DELETE FROM portfolio_has_product_type WHERE portfolio_id = ?`, [portfolio_id])
-            for (const typeName of product_types) {
-                const type_id = await getOrCreateIdByName('product_type', 'product_type_name', 'product_type_id', typeName)
-                if (type_id) {
-                    await conn.execute(`INSERT INTO portfolio_has_product_type (portfolio_id, product_type_id) VALUES (?, ?)`, [portfolio_id, type_id])
-                }
-            }
+            await updateMany(product_types, 'product_type', 'product_type_name', 'product_type_id')
         }
 
-        // Update platforms
         if (Array.isArray(platforms)) {
-            await conn.execute(`DELETE FROM portfolio_has_platform WHERE portfolio_id = ?`, [portfolio_id])
-            for (const platformName of platforms) {
-                const platform_id = await getOrCreateIdByName('platform', 'platform_name', 'platform_id', platformName)
-                if (platform_id) {
-                    await conn.execute(`INSERT INTO portfolio_has_platform (portfolio_id, platform_id) VALUES (?, ?)`, [portfolio_id, platform_id])
-                }
-            }
+            await updateMany(platforms, 'platform', 'platform_name', 'platform_id')
         }
 
-        // Update features
         if (Array.isArray(features)) {
-            await conn.execute(`DELETE FROM portfolio_has_feature WHERE portfolio_id = ?`, [portfolio_id])
-            for (const featureName of features) {
-                const feature_id = await getOrCreateIdByName('feature', 'feature_name', 'feature_id', featureName)
-                if (feature_id) {
-                    await conn.execute(`INSERT INTO portfolio_has_feature (portfolio_id, feature_id) VALUES (?, ?)`, [portfolio_id, feature_id])
-                }
-            }
+            await updateMany(features, 'feature', 'feature_name', 'feature_id')
         }
 
-        // Update roles
         if (Array.isArray(roles)) {
-            await conn.execute(`DELETE FROM portfolio_has_role WHERE portfolio_id = ?`, [portfolio_id])
-            for (const roleName of roles) {
-                const role_id = await getOrCreateIdByName('role', 'role_name', 'role_id', roleName)
-                if (role_id) {
-                    await conn.execute(`INSERT INTO portfolio_has_role (portfolio_id, role_id) VALUES (?, ?)`, [portfolio_id, role_id])
-                }
-            }
+            await updateMany(roles, 'role', 'role_name', 'role_id')
         }
 
         await conn.commit()
