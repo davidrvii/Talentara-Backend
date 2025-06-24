@@ -179,6 +179,9 @@ const uploadPortfolio = async (conn, body, talent_id) => {
         // Insert languages
         await insertMany(body.languages, 'language', 'language_name', 'language_id')
 
+        //Insert Features
+        await insertMany(body.features, 'feature', 'feature_name', 'feature_id')
+
     return portfolio_id
 }
 
