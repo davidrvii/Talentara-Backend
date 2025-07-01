@@ -264,6 +264,7 @@ module.exports = {
     getProjectOrder,
     getProjectDetail,
     getCurrentProject,
+    getAccessLevel,
     createNewProject,
     updateProject,
     respondToProjectOffer,
