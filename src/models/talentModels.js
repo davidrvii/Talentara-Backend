@@ -214,7 +214,6 @@ const updateTalent = async (body, talent_id) => {
             is_project_manager,
             project_done,
             is_on_project,
-            talent_avg_rating,
             availability
         } = body;
 
@@ -229,9 +228,6 @@ const updateTalent = async (body, talent_id) => {
         }
         if (typeof is_on_project !== 'undefined') {
             updateTalentFields.push(`is_on_project = ${conn.escape(is_on_project)}`);
-        }
-        if (typeof talent_avg_rating !== 'undefined') {
-            updateTalentFields.push(`talent_avg_rating = ${conn.escape(talent_avg_rating)}`);
         }
         if (typeof availability !== 'undefined') {
             updateTalentFields.push(`availability = ${conn.escape(availability)}`);
