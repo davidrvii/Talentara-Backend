@@ -12,7 +12,7 @@ router.get('/detail/:id', authentication, projectController.getProjectDetail)
 
 router.get('/current/:id', authentication, authorization, projectController.getCurrentProject)
 
-router.get('/projects/:projectId/talent/:talentId/access', projectController.getAccessLevel)
+router.get('/access/:id', projectController.getAccessLevel)
 
 router.post('/add', authentication, authorization, projectController.createNewProject)
 
