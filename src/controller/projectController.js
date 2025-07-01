@@ -78,6 +78,29 @@ const getCurrentProject = async (req, res) => {
     }
 }
 
+const getAccessLevel = async (req, res) => {
+    const user_id = req.userData.user_id
+    const { id } = req.params
+
+    try {
+        let access
+        const [role] = await projectModel.getAccessLevel(id, user_id)
+        if (role.length > 0) {
+            const roleName = role[0].role_name
+            if (roleName === "Manager") {
+                access = "Manager"
+            } else {
+                access = "roleName"
+            }
+        } else {
+            access = "Client"
+        }
+        response(200, {access: access}, 'Get Access Level Success', res)
+    } catch (error) {
+        response(500, {error: error}, 'Get Access Level: Server Error', res)
+    }
+}
+
 
 async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
     //Cari kandidat terurut berdasarkan skor kecocokan

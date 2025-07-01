@@ -173,6 +173,16 @@ const getCurrentProject = (user_id) => {
     return dbPool.execute(sqlQuery, [user_id])
 }
 
+const getAccessLevel = async (project_id, user_id) => {
+    const sqlQuery = `
+        SELECT r.role_name
+        FROM project_has_talent AS phr
+        JOIN role AS r ON phr.role_id = r.role_id
+        WHERE phr.project_id = ? AND phr.talent_id = ?`
+
+    return dbPool.execute(sqlQuery, [project_id, user_id])
+}
+
 
 
 const createNewProject = async (body, user_id) => {
@@ -446,6 +456,7 @@ module.exports = {
     getProjectDetail,
     getProjectOrder,
     getCurrentProject,
+    getAccessLevel,
     createNewProject,
     insertToProjectHasTalent,
     updateProject,

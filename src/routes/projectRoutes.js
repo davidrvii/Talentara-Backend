@@ -12,6 +12,8 @@ router.get('/detail/:id', authentication, projectController.getProjectDetail)
 
 router.get('/current/:id', authentication, authorization, projectController.getCurrentProject)
 
+router.get('/projects/:projectId/talent/:talentId/access', projectController.getAccessLevel)
+
 router.post('/add', authentication, authorization, projectController.createNewProject)
 
 router.patch('/update/:id', authentication, authorization, projectController.updateProject)
