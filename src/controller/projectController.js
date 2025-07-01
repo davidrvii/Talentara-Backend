@@ -90,7 +90,7 @@ const getAccessLevel = async (req, res) => {
             if (roleName === "Manager") {
                 access = "Manager"
             } else {
-                access = "roleName"
+                access = roleName
             }
         } else {
             access = "Client"
