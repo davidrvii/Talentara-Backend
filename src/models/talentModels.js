@@ -225,7 +225,7 @@ const updateTalent = async (body, talent_id) => {
             updateTalentFields.push(`is_project_manager = ${conn.escape(is_project_manager)}`);
         }
         if (typeof project_done !== 'undefined') {
-            updateTalentFields.push(`project_done = ${conn.escape(project_done)}`);
+            updateTalentFields.push(`project_done = project_done + ${conn.escape(project_done)}`);
         }
         if (typeof is_on_project !== 'undefined') {
             updateTalentFields.push(`is_on_project = ${conn.escape(is_on_project)}`);
