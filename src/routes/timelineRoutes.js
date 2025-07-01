@@ -10,7 +10,7 @@ router.get('/current/:id', authentication, timelineController.getCurrentTimeline
 
 router.get('/project/:id', authentication, timelineController.getAllTimelineProject)
 
-router.get('approve/:id', authentication, authorization, timelineController.getTimelineApprovement)
+router.get('/approve/:id', authentication, authorization, timelineController.getTimelineApprovement)
 
 router.post('/add', authentication, authorization, timelineController.createNewTimeline)
 
