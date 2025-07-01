@@ -87,11 +87,7 @@ const getAccessLevel = async (req, res) => {
         const [role] = await projectModel.getAccessLevel(id, user_id)
         if (role.length > 0) {
             const roleName = role[0].role_name
-            if (roleName === "Manager") {
-                access = "Manager"
-            } else {
-                access = roleName
-            }
+            access = roleName
         } else {
             access = "Client"
         }
