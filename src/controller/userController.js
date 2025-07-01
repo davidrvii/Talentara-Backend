@@ -102,6 +102,19 @@ const updateUser = async (req, res) => {
     }
 }
 
+const saveFcmToken = async (req, res) => {
+    const { fcm_token } = req.body
+    const user_id = req.userData.user_id
+
+    try {
+        await projectModel.saveFcmToken(user_id, fcm_token)
+        response(200, {fcmToken: fcm_token}, 'FCM Token Saved Successfully', res)
+    } catch (error) {
+        response(200, {error: error}, 'Error Saving FCM Token: Server Error', res)
+        throw error
+    }
+}
+
 const deleteUser = async (req, res) => {
     const { id } = req.params
 
@@ -121,6 +134,7 @@ module.exports = {
     userRegister,
     userLogin,
     updateUser,
+    saveFcmToken,
     deleteUser
 }
 

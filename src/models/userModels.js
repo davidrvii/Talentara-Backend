@@ -52,6 +52,12 @@ const updateUser = (body, user_id) => {
     return dbPool.execute(sqlQuery, [...values, user_id])
 }
 
+const saveFcmToken = (user_id, fcm_token) => {
+    const sqlQuery = 'UPDATE users SET fcm_token = ? WHERE user_id = ?'
+
+    return dbPool.execute(sqlQuery, [fcm_token, user_id])
+}
+
 //Delete a User By ID (Testing-Only)
 const deleteUser = (user_id) => {
     const  sqlQuery = `DELETE FROM user WHERE user_id = ?`
@@ -66,5 +72,6 @@ module.exports = {
     userRegister,
     userLogin,
     updateUser,
+    saveFcmToken,
     deleteUser
 }

@@ -403,7 +403,6 @@ const updateProject = async (body, project_id) => {
     }
 }
 
-
 //Delete a Project By ID (Testing-Only)
 const deleteProject = (project_id) => {
     const sqlQuery =   `DELETE FROM project
@@ -444,6 +443,12 @@ const countAcceptedTalentsByRole = (project_id) => {
     return dbPool.execute(sqlQuery, [project_id])
 }
 
+const getTalentDeviceToken = (talent_id) => {
+    const sqlQuery = 'SELECT fcm_token FROM users WHERE user_id = ?'
+
+    return dbPool.execute(sqlQuery, [talent_id])
+}
+
 const updateProjectStatus = (project_id, status_id) => {
     const sqlQuery = `UPDATE project SET status_id = ? WHERE project_id = ?`
 
@@ -463,5 +468,6 @@ module.exports = {
     deleteProject,
     getProjectRoleRequirement,
     countAcceptedTalentsByRole,
+    getTalentDeviceToken,
     updateProjectStatus
 }

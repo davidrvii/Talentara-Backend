@@ -3,6 +3,7 @@ const timelineModel = require('../models/timelineModels')
 const response = require('../../response')
 const { generateProjectAnalysis } = require('../utils/openai')
 const { findRecommendedTalent } = require('../utils/ncf')
+const admin = require('firebase-admin');
 
 const getAllProject = async (req, res) => {
     try {
@@ -97,20 +98,6 @@ const getAccessLevel = async (req, res) => {
     }
 }
 
-
-async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
-    //Cari kandidat terurut berdasarkan skor kecocokan
-    const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
-    //Pilih top-N sesuai role_amount
-    const selected = candidates.slice(0, role_amount)
-    //Kirim notifikasi undangan ke setiap talent
-    for (const talent of selected) {
-        await sendPushNotification(talent.id, { type: 'PROJECT_INVITE', project_id, role_name })
-    }
-    //Kembalikan daftar talent yang diundang
-    return selected.map(t => t.id)
-}
-
 const createNewProject = async (req, res) => {
     const { 
         status_id,
@@ -199,9 +186,7 @@ const respondToProjectOffer = async (req, res) => {
 
     try {
         const [requiredRoles] = await projectModel.getProjectRoleRequirement(project_id)
-        console.log('requiredRoles', requiredRoles)
         const role = requiredRoles.find(r => r.role_name === role_name)
-        console.log('role', role)
         const countRoles = await projectModel.countAcceptedTalentsByRole(project_id)
         const count = countRoles.find(r => r.role_name === role_name)
 
@@ -234,12 +219,50 @@ const respondToProjectOffer = async (req, res) => {
             )
             return response(200, { accepted: true, next: 'project_started' }, 'Project Started', res)
         }
-
         return response(200, { accepted: true, next: 'waiting_for_team' }, 'Talent Accepted', res)
     } catch (error) {
         response(500, { error }, 'Respond To Project Offer: Server Error', res)
         throw error
     }
+}
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+});
+
+async function sendPushNotification(talent_id, data) {
+    const token = await projectModel.getTalentDeviceToken(talent_id);  // Ambil FCM token perangkat dari database
+
+    const message = {
+        token: token,
+        notification: {
+            title: 'Project Update',
+            body: data.type === 'PROJECT_OFFER_ACCEPTED'
+                ? 'You have accepted the project offer!'
+                : 'You are invited to a new project.',
+        },
+        data: {
+            project_id: data.project_id,
+            role_name: data.role_name,
+            type: data.type,
+        },
+    };
+
+    try {
+        await admin.messaging().send(message);
+        console.log('Notification sent successfully');
+    } catch (error) {
+        console.error('Error sending notification:', error);
+    }
+}
+
+async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
+    const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
+    const selected = candidates.slice(0, role_amount)
+    for (const talent of selected) {
+        await sendPushNotification(talent.id, { type: 'PROJECT_INVITE', project_id, role_name })
+    }
+    return selected.map(t => t.id)
 }
 
 const deleteProject = async (req, res) => {
