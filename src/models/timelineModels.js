@@ -35,6 +35,17 @@ const getAllTimelineProject = (project_id) => {
     return dbPool.execute(sqlQuery, [project_id])
 }
 
+const getTimelineApprovement = (timeline_id) => {
+    const sqlQuery = `
+        SELECT 
+            client_approved, 
+            leader_approved 
+        FROM timeline 
+        WHERE timeline_id = ?`
+
+    return dbPool.execute(sqlQuery, [timeline_id])
+}
+
 //Create a New Project Timeline Phase
 const createNewTimeline = (body) => {
     const sqlQuery =   `INSERT INTO timeline (project_id, project_phase, start_date, end_date)
@@ -67,6 +78,7 @@ module.exports = {
     getTimelineDetail,
     getCurrentTimeline,
     getAllTimelineProject,
+    getTimelineApprovement,
     createNewTimeline,
     updateTimeline,
     deleteTimeline

@@ -59,6 +59,16 @@ const { id } = req.params
     }
 }
 
+const getTimelineApprovement = async (req, res) => {
+    const { id } = req.params
+    try {
+        const [approvement] = await timelineModel.getTimelineApprovement(id)
+        response(200, {approvement: approvement}, 'Get Timeline Approvement Success', res)
+    } catch (error) {
+        response(500, {error: error}, 'Get Timeline Approvement: Server Error', res)
+    }
+}
+
 const createNewTimeline = async (req, res) => {
     const { body } = req
     try {
@@ -100,6 +110,7 @@ module.exports = {
     getTimelineDetail,
     getCurrentTimeline,
     getAllTimelineProject,
+    getTimelineApprovement,
     createNewTimeline,
     updateTimeline,
     deleteTimeline
