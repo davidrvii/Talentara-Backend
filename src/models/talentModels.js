@@ -82,7 +82,8 @@ const getFilteredTalent = (role_name, excludeIds = []) => {
         LEFT JOIN platform pf ON thpf.platform_id = pf.platform_id
 
         WHERE 
-            t.is_on_project = false
+            u.is_on_project = 0
+            AND t.is_on_project = 0
             AND r.role_name = ?
             ${excludeIdsCondition}
 

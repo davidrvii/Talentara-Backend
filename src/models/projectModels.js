@@ -44,24 +44,38 @@ const getAllProject = () => {
 // Get All Projects History By Specific Talent
 const getAllProjectHistory = (talent_id) => {
     const sqlQuery = `
-        SELECT 
-            p.project_id,
-            p.project_name,
-            p.client_name,
-            p.start_date
-            p.completed_date,
-            s.status_name,
-            GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
-            GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms
-        FROM project p
-        JOIN status s ON p.status_id = s.status_id
-        LEFT JOIN project_has_product_type ppt ON p.project_id = ppt.project_id
-        LEFT JOIN product_type pt ON ppt.product_type_id = pt.product_type_id
-        LEFT JOIN project_has_platform pp ON p.project_id = pp.project_id
-        LEFT JOIN platform pf ON pp.platform_id = pf.platform_id
-        WHERE p.user_id = ?
-        GROUP BY p.project_id
-        ORDER BY p.start_date ASC`
+            SELECT 
+                p.project_id,
+                p.project_name,
+                p.client_name,
+                p.start_date,
+                p.completed_date,
+                s.status_name,
+                GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|')   AS product_types,
+                GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|')       AS platforms
+            FROM project p
+            JOIN status s 
+                ON p.status_id = s.status_id
+
+            LEFT JOIN project_has_product_type ppt 
+                ON p.project_id = ppt.project_id
+            LEFT JOIN product_type pt 
+                ON ppt.product_type_id = pt.product_type_id
+
+            LEFT JOIN project_has_platform pp 
+                ON p.project_id = pp.project_id
+            LEFT JOIN platform pf 
+                ON pp.platform_id = pf.platform_id
+
+            LEFT JOIN project_has_talent pht 
+                ON p.project_id = pht.project_id
+
+            WHERE 
+                p.user_id = ?
+                OR pht.talent_id = ?
+
+            GROUP BY p.project_id
+            ORDER BY p.start_date ASC`
 
     return dbPool.execute(sqlQuery, [talent_id])
 }
@@ -72,7 +86,8 @@ const getProjectDetail = (project_id) => {
         SELECT 
             p.*,
             s.status_name,
-            GROUP_CONCAT(DISTINCT CONCAT(tlt.talent_id, ':', u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents
+            cu.user_email AS client_email,
+            GROUP_CONCAT(DISTINCT CONCAT(tlt.talent_id, ':', u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents,
             GROUP_CONCAT(DISTINCT t.tools_name SEPARATOR '|') AS tools,
             GROUP_CONCAT(DISTINCT l.language_name SEPARATOR '|') AS languages,
             GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
@@ -81,6 +96,8 @@ const getProjectDetail = (project_id) => {
         FROM project p
 
         JOIN status s ON p.status_id = s.status_id
+
+        LEFT JOIN user cu ON p.user_id = cu.user_id
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
@@ -444,9 +461,12 @@ const countAcceptedTalentsByRole = (project_id) => {
 }
 
 const getTalentDeviceToken = (talent_id) => {
-    const sqlQuery = 'SELECT fcm_token FROM users WHERE user_id = ?'
-
-    return dbPool.execute(sqlQuery, [talent_id])
+    const [rows] = dbPool.execute(
+    'SELECT fcm_token FROM users WHERE user_id = ?',
+    [talent_id]
+    )
+    if (!rows.length || !rows[0].fcm_token) return null
+    return rows[0].fcm_token
 }
 
 const updateProjectStatus = (project_id, status_id) => {

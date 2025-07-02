@@ -2,6 +2,11 @@ const express = require('express')
 const app = express()
 const router = require('./routes/router')
 const middlewareLogRequest = require('./middleware/logs')
+const admin = require('firebase-admin')
+
+admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+})
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true })) 

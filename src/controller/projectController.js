@@ -3,7 +3,6 @@ const timelineModel = require('../models/timelineModels')
 const response = require('../../response')
 const { generateProjectAnalysis } = require('../utils/openai')
 const { findRecommendedTalent } = require('../utils/ncf')
-const admin = require('firebase-admin');
 
 const getAllProject = async (req, res) => {
     try {
@@ -198,7 +197,7 @@ const respondToProjectOffer = async (req, res) => {
 
         // Talent Late Accept Handling
         if (count >= role.role_amount) {
-            await sendPushNotification(talent_id, { type: 'TEAM_FULL', project_id, role_name })
+            await teamFullPushNotification(talent_id, project_id, role_name)
             return response(200, { accepted: false, message: 'Team already full' }, 'Team Already Full', res)
         }
 
@@ -215,7 +214,7 @@ const respondToProjectOffer = async (req, res) => {
             await projectModel.updateProjectStatus(project_id, 3)
             const team = await projectModel.getFullTeam(project_id)
             await Promise.all(
-                team.map(t => sendPushNotification(t.id, { type: 'PROJECT_STARTED', project_id }))
+                team.map(t => projectStartedPushNotification(t.id, project_id, role_name))
             )
             return response(200, { accepted: true, next: 'project_started' }, 'Project Started', res)
         }
@@ -226,26 +225,110 @@ const respondToProjectOffer = async (req, res) => {
     }
 }
 
-admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-});
+async function teamFullPushNotification(talent_id, project_id, role_name) {
+    await notificationModel.createNewNotification({
+        user_id: userId,
+        notification_title: 'Team Already Full',
+        notification_desc: `Sorry, ${role_name} role for this project is full filled`,
+        notification_type: 'PROJECT_FULL',
+        reference_id: project_id,
+        click_action: 'NONE'
+    })
 
-async function sendPushNotification(talent_id, data) {
-    const token = await projectModel.getTalentDeviceToken(talent_id);  // Ambil FCM token perangkat dari database
+    const token = await projectModel.getTalentDeviceToken(talent_id)
+    if (!token) {
+    console.warn(`No FCM token for talent ${talent_id}, skipping notification`)
+    return
+    }
 
     const message = {
         token: token,
+        android: { priority: 'high' },
         notification: {
-            title: 'Project Update',
-            body: data.type === 'PROJECT_OFFER_ACCEPTED'
-                ? 'You have accepted the project offer!'
-                : 'You are invited to a new project.',
+            title: 'Team Already Full',
+            body: `Sorry, ${role_name} role for this project is full filled`
         },
-        data: {
-            project_id: data.project_id,
-            role_name: data.role_name,
-            type: data.type,
+        data: { 
+            notification_type: 'PROJECT_OFFER',
+            reference_id: project_id.toString(),
+            click_action: 'OPEN_PROJECT_OFFER'
+        }
+    };
+
+    try {
+        await admin.messaging().send(message);
+        console.log('Notification sent successfully');
+    } catch (error) {
+        console.error('Error sending notification:', error);
+    }
+}
+
+async function projectStartedPushNotification(talent_id, project_id, role_name) {
+    await notificationModel.createNewNotification({
+        user_id: userId,
+        notification_title: 'Project Started',
+        notification_desc: `Project has officially started`,
+        notification_type: 'PROJECT_STARTED',
+        reference_id: project_id,
+        click_action: 'OPEN_PROJECT_DETAIL'
+    })
+
+    const token = await projectModel.getTalentDeviceToken(talent_id)
+    if (!token) {
+    console.warn(`No FCM token for talent ${talent_id}, skipping notification`)
+    return
+    }
+
+    const message = {
+        token: token,
+        android: { priority: 'high' },
+        notification: {
+            title: 'Project Started',
+            body: `Project has officially started`
         },
+        data: { 
+            notification_type: 'PROJECT_STARTED',
+            reference_id: project_id.toString(),
+            click_action: 'OPEN_PROJECT_DETAIL'
+        }
+    };
+
+    try {
+        await admin.messaging().send(message);
+        console.log('Notification sent successfully');
+    } catch (error) {
+        console.error('Error sending notification:', error);
+    }
+}
+
+async function getProjectPushNotification(talent_id, project_id, role_name) {
+    await notificationModel.createNewNotification({
+        user_id: userId,
+        notification_title: 'You Got New Project!',
+        notification_desc: `You are invited to a project as a ${role_name}`,
+        notification_type: 'PROJECT_OFFER',
+        reference_id: project_id,
+        click_action: 'OPEN_PROJECT_OFFER'
+    })
+
+    const token = await projectModel.getTalentDeviceToken(talent_id)
+    if (!token) {
+    console.warn(`No FCM token for talent ${talent_id}, skipping notification`)
+    return
+    }
+
+    const message = {
+        token: token,
+        android: { priority: 'high' },
+        notification: {
+            title: 'You Got New Project!',
+            body: `You are invited to a project as a ${role_name}`
+        },
+        data: { 
+            notification_type: 'PROJECT_OFFER',
+            reference_id: project_id.toString(),
+            click_action: 'OPEN_PROJECT_OFFER'
+        }
     };
 
     try {
@@ -260,7 +343,7 @@ async function inviteTalent(project_id, role_name, role_amount, excludeIds = [])
     const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
     const selected = candidates.slice(0, role_amount)
     for (const talent of selected) {
-        await sendPushNotification(talent.id, { type: 'PROJECT_INVITE', project_id, role_name })
+        await getProjectPushNotification(talent.id, project_id, role_name)
     }
     return selected.map(t => t.id)
 }
