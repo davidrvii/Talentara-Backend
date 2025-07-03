@@ -249,9 +249,9 @@ async function teamFullPushNotification(talent_id, project_id, role_name) {
             body: `Sorry, ${role_name} role for this project is full filled`
         },
         data: { 
-            notification_type: 'PROJECT_OFFER',
+            notification_type: 'TEAM_FULL',
             reference_id: project_id.toString(),
-            click_action: 'OPEN_PROJECT_OFFER'
+            click_action: 'NONE'
         }
     };
 
@@ -327,6 +327,7 @@ async function getProjectPushNotification(talent_id, project_id, role_name) {
         data: { 
             notification_type: 'PROJECT_OFFER',
             reference_id: project_id.toString(),
+            role_name: role_name.toString(),
             click_action: 'OPEN_PROJECT_OFFER'
         }
     };
