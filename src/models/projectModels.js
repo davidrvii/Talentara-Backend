@@ -77,7 +77,7 @@ const getAllProjectHistory = (talent_id) => {
             GROUP BY p.project_id
             ORDER BY p.start_date ASC`
 
-    return dbPool.execute(sqlQuery, [talent_id])
+    return dbPool.execute(sqlQuery, [talent_id, talent_id])
 }
 
 // Get a Project Detail By Project ID
