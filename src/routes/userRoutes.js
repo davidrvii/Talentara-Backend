@@ -14,7 +14,7 @@ router.post('/login', userController.userLogin)
 
 router.patch('/update/:id', authentication, authorization, userController.updateUser)
 
-router.patch('/fcm', authentication, authorization, projectController.saveFcmToken)
+router.patch('/fcm', authentication, authorization, userController.saveFcmToken)
 
 router.delete('/delete/:id', authentication, authorization, userController.deleteUser)
 
