@@ -12,11 +12,11 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true })) 
 app.use(middlewareLogRequest)
 
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')))
+app.use('/uploads', express.static('public/uploads'))
+app.use('/assets', express.static('public/images'))
+
 app.use(router)
-
-app.use('/uploads', express.static('public/uploads'))
-app.use('/uploads', express.static('public/uploads'))
-
 
 // Global error handler
 app.use((err, req, res, next) => {
