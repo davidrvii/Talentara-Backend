@@ -91,7 +91,12 @@ const userLogin = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { id } = req.params
-    const { body } = req
+    const { body } = req.body
+    const files = req.files
+
+    if (files?.user_image?.[0]) {
+        body.user_image = files.user_image[0].filename
+    }
 
     try {
         await userModel.updateUser(body, id)
