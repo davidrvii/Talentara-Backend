@@ -3,6 +3,7 @@ const app = express()
 const router = require('./routes/router')
 const middlewareLogRequest = require('./middleware/logs')
 const admin = require('firebase-admin')
+const path = require('path')
 
 admin.initializeApp({
     credential: admin.credential.applicationDefault(),
