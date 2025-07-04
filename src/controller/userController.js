@@ -9,9 +9,9 @@ const getAllUser = async (req, res) => {
 
         users.forEach(user => {
             if (user.user_image) {
-                user.user_image = `${req.protocol}://${req.get('host')}/uploads/images/${user.user_image}`
+                user.user_image = `https://${req.get('host')}/uploads/images/${user.user_image}`
             }
-        })
+        });
 
         response(200, {users: users}, 'Get All User Success', res)
     } catch (error) {
@@ -30,9 +30,9 @@ const getUserDetail = async (req, res) => {
         } else {
             user.forEach(u => {
                 if (u.user_image) {
-                    u.user_image = `${req.protocol}://${req.get('host')}/uploads/images/${u.user_image}`
+                    u.user_image = `https://${req.get('host')}/uploads/images/${u.user_image}`
                 }
-            })
+            });
 
             return response(200, {userDetail: user}, 'Get User Detail Success', res)
         }
@@ -50,11 +50,11 @@ const getUserBasic = async (req, res) => {
         if (user.length === 0 ) {
             return response(404, {usersBasic: null}, 'Get User Basic: User Not Found', res)
         } else {
-            const baseUrl = `${req.protocol}://${req.get('host')}`
+            const baseUrl = `https://${req.get('host')}`;
             const formattedUsers = user.map(u => ({
-            ...u,
-            user_image: u.user_image ? `${baseUrl}/uploads/images/${u.user_image}` : null
-        }))
+                ...u,
+                user_image: u.user_image ? `${baseUrl}/uploads/images/${u.user_image}` : null
+            }));
             return response(200, {usersBasic: formattedUsers}, 'Get User Basic Success', res)
         }
     } catch (error) {
