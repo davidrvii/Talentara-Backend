@@ -6,6 +6,13 @@ const { generateToken } = require('../utils/jwt')
 const getAllUser = async (req, res) => {
     try {
         const [users] = await userModel.getAllUser()
+
+        users.forEach(user => {
+            if (user.user_image) {
+                user.user_image = `${req.protocol}://${req.get('host')}/uploads/images/${user.user_image}`
+            }
+        })
+
         response(200, {users: users}, 'Get All User Success', res)
     } catch (error) {
         response(500, {error: error}, 'Get All User: Server Error', res)
@@ -21,6 +28,12 @@ const getUserDetail = async (req, res) => {
         if (user.length === 0 ) {
             return response(404, {usersDetail: null}, 'Get User Detail: User Not Found', res)
         } else {
+            user.forEach(u => {
+                if (u.user_image) {
+                    u.user_image = `${req.protocol}://${req.get('host')}/uploads/images/${u.user_image}`
+                }
+            })
+            
             return response(200, {userDetail: user}, 'Get User Detail Success', res)
         }
     } catch (error) {
@@ -37,6 +50,11 @@ const getUserBasic = async (req, res) => {
         if (user.length === 0 ) {
             return response(404, {usersBasic: null}, 'Get User Basic: User Not Found', res)
         } else {
+            user.forEach(u => {
+                if (u.user_image) {
+                    u.user_image = `${req.protocol}://${req.get('host')}/uploads/images/${u.user_image}`
+                }
+            })
             return response(200, {usersBasic: user}, 'Get User Basic Success', res)
         }
     } catch (error) {
