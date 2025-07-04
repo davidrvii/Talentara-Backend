@@ -14,6 +14,9 @@ app.use(middlewareLogRequest)
 
 app.use(router)
 
+app.use('/uploads', express.static('public/uploads'));
+
+
 // Global error handler
 app.use((err, req, res, next) => {
     console.error('Global error:', err.stack)
