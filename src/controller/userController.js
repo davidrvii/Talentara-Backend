@@ -91,8 +91,12 @@ const userLogin = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { id } = req.params
-    const body = req.body;
-    const file = req.file || (req.files?.user_image?.[0]);
+    const body = req.body
+    const file = req.file || (req.files?.user_image?.[0])
+
+    console.log('FILE:', req.file);
+    console.log('BODY:', req.body);
+
 
     if (file) {
         body.user_image = file.filename
