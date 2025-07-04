@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const userController = require('../controller/userController')
 const { authentication, authorization } = require('../middleware/auth')
+const multer = require('multer');
 const upload = multer();
 
 router.get('/admin', userController.getAllUser)
