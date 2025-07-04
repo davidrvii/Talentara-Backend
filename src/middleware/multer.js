@@ -1,35 +1,38 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const multer = require('multer')
+const path = require('path')
+const fs = require('fs')
+const { v4: uuidv4 } = require('uuid')
 
 // Pastikan folder ada
-const imageDir = 'public/uploads/images/';
-if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true });
+const imageDir = 'public/uploads/images/'
+if (!fs.existsSync(imageDir)) fs.mkdirSync(imageDir, { recursive: true })
 
 // Dynamic storage
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        if (file.fieldname === 'upload_photo' || file.fieldname === 'user_image') {
-            cb(null, imageDir);
-        } else {
-            cb(new Error('Unsupported fieldname: ' + file.fieldname), false);
-        }
+    destination: (req, file, cb) => {
+        cb(null, imageDir)
     },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + file.originalname;
-        cb(null, uniqueSuffix);
+    filename: (req, file, cb) => {
+        const ext = path.extname(file.originalname)
+        const uniqueName = uuidv4() + ext
+        cb(null, uniqueName)
     }
-});
+})
 
 const fileFilter = (req, file, cb) => {
-    const allowedFields = ['user_image'];
+    const allowedFields = ['user_image']
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/jpg']
 
-    if (allowedFields.includes(file.fieldname)) {
-        cb(null, true);
-    } else {
-        cb(new Error('Unsupported file field: ' + file.fieldname), false);
+    if (!allowedFields.includes(file.fieldname)) {
+        return cb(new Error(`Field '${file.fieldname}' not allowed.`), false)
     }
-};
+
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+        return cb(new Error('Only JPG, JPEG, or PNG file allowed.'), false)
+    }
+
+    cb(null, true);
+}
 
 const upload = multer({
     storage: storage,

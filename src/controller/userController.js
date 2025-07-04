@@ -91,11 +91,11 @@ const userLogin = async (req, res) => {
 
 const updateUser = async (req, res) => {
     const { id } = req.params
-    const { body } = req.body
-    const files = req.files
+    const body = req.body;
+    const file = req.file || (req.files?.user_image?.[0]);
 
-    if (files?.user_image?.[0]) {
-        body.user_image = files.user_image[0].filename
+    if (file) {
+        body.user_image = file.filename
     }
 
     try {
