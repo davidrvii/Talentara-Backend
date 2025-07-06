@@ -35,7 +35,9 @@ const createNewNotification = (body) => {
                         )
                         VALUES (?, ?, ?, ?, ?, ?)`
 
-    return dbPool.execute(sqlQuery, [body.user_id, body.notification_title, body.notification_desc, body.notification_type, body.reference_id, body.click_action])
+    const referenceId = body.reference_id !== undefined ? body.reference_id : null
+
+    return dbPool.execute(sqlQuery, [body.user_id, body.notification_title, body.notification_desc, body.notification_type, referenceId, body.click_action])
 }
 
 //Update a Notification By ID (Testing-Only)
