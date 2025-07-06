@@ -296,6 +296,15 @@ const insertToProjectHasTalent = async (project_id, talent_id, role_name) => {
     }
 }
 
+const updateProjectCompleted = async (body, project_id) => {
+    const sqlQuery = `
+        UPDATE project
+        SET status_id = ?, completed_date = ?
+        WHERE project_id = ?`
+
+    return dbPool.execute(sqlQuery, [project_id, body.status_id, body.completed_date])
+}
+
 
 const updateProject = async (body, project_id) => {
     const conn = await dbPool.getConnection();
@@ -484,6 +493,7 @@ module.exports = {
     getAccessLevel,
     createNewProject,
     insertToProjectHasTalent,
+    updateProjectCompleted,
     updateProject,
     deleteProject,
     getProjectRoleRequirement,

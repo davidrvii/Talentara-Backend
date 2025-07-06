@@ -18,6 +18,8 @@ router.post('/add', authentication, authorization, projectController.createNewPr
 
 router.patch('/update/:id', authentication, authorization, projectController.updateProject)
 
+router.patch('/completed/:id', authentication, authorization, projectController.updateProjectCompleted)
+
 router.patch('/offer', authentication, authorization, projectController.respondToProjectOffer)
 
 router.delete('/delete/:id', authentication, authorization, projectController.deleteProject)

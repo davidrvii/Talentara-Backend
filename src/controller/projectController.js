@@ -153,6 +153,19 @@ const createNewProject = async (req, res) => {
     }
 }
 
+const updateProjectCompleted = async (req, res) => {
+    const { id } = req.params
+    const { body } = req.body
+
+    try {
+        await projectModel.updateProjectCompleted(body, id)
+
+        response(200,{updateProjectCompleted: Body}, "Update Project Completed Success", res)
+    } catch (error) {
+        response(500, {error: error}, "Update Project Completed: Server Error", res)
+    }
+}
+
 //Finalized Project By Project Leader
 //Update Platform, Product Type, Role (Amount), Language, Tools and Feature For Talent Filtering 
 const updateProject = async (req, res) => {
@@ -369,6 +382,7 @@ module.exports = {
     getCurrentProject,
     getAccessLevel,
     createNewProject,
+    updateProjectCompleted,
     updateProject,
     respondToProjectOffer,
     deleteProject
