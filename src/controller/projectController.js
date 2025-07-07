@@ -160,7 +160,7 @@ const updateProjectCompleted = async (req, res) => {
     try {
         await projectModel.updateProjectCompleted(body, id)
 
-        response(200,{updateProjectCompleted: Body}, "Update Project Completed Success", res)
+        response(200,{updateProjectCompleted: body}, "Update Project Completed Success", res)
     } catch (error) {
         response(500, {error: error}, "Update Project Completed: Server Error", res)
         throw error
