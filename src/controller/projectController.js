@@ -155,7 +155,7 @@ const createNewProject = async (req, res) => {
 
 const updateProjectCompleted = async (req, res) => {
     const { id } = req.params
-    const { body } = req.body
+    const { body } = req
 
     try {
         await projectModel.updateProjectCompleted(body, id)
