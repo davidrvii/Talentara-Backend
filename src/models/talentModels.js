@@ -83,7 +83,7 @@ const getFilteredTalent = (role_name, excludeIds = []) => {
 
         WHERE 
             u.is_on_project = 0
-            AND t.is_on_project = 0
+            AND u.is_on_project = 0
             AND r.role_name = ?
             ${excludeIdsCondition}
 
@@ -214,7 +214,6 @@ const updateTalent = async (body, talent_id) => {
             platforms,
             is_project_manager,
             project_done,
-            is_on_project,
             availability
         } = body;
 
@@ -226,9 +225,6 @@ const updateTalent = async (body, talent_id) => {
         }
         if (typeof project_done !== 'undefined') {
             updateTalentFields.push(`project_done = project_done + ${conn.escape(project_done)}`);
-        }
-        if (typeof is_on_project !== 'undefined') {
-            updateTalentFields.push(`is_on_project = ${conn.escape(is_on_project)}`);
         }
         if (typeof availability !== 'undefined') {
             updateTalentFields.push(`availability = ${conn.escape(availability)}`);
