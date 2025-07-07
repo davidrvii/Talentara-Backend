@@ -302,7 +302,7 @@ const updateProjectCompleted = async (body, project_id) => {
         SET status_id = ?, completed_date = ?
         WHERE project_id = ?`
 
-    return dbPool.execute(sqlQuery, [project_id, body.status_id, body.completed_date])
+    return dbPool.execute(sqlQuery, [body.status_id, body.completed_date, project_id])
 }
 
 
