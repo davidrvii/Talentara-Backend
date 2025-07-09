@@ -13,6 +13,9 @@ const testInviteTalent = async (req, res) => {
             return response(404, { invitedTalentIds }, 'No suitable talent found for this role', res)
         }
 
+        console.log("invitedTalentIds =", invitedTalentIds)
+        console.log("isArray?", Array.isArray(invitedTalentIds))
+
         response(200, { invitedTalentIds }, 'Invite Talent Success', res)
     } catch (error) {
         console.error('Error in testInviteTalent:', error.message)
