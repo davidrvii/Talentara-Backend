@@ -5,7 +5,7 @@ const { getFilteredTalent } = require('../models/talentModels')
 async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
     try {
         const projectDetail = await getProjectDetail(project_id)
-        const talents = await getFilteredTalent(role_name, excludeIds)
+        const [talents] = await getFilteredTalent(role_name, excludeIds)
 
         console.log(`Filtered Talents: ${talents}`)
 
