@@ -359,9 +359,9 @@ async function inviteTalent(project_id, role_name, role_amount, excludeIds = [])
     const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
     const selected = candidates.slice(0, role_amount)
     for (const talent of selected) {
-        await getProjectPushNotification(talent.id, project_id, role_name)
+        await getProjectPushNotification(talent.talent_id, project_id, role_name)
     }
-    return selected.map(t => t.id)
+    return selected.map(t => t.talent_id)
 }
 
 const deleteProject = async (req, res) => {
