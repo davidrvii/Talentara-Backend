@@ -242,7 +242,7 @@ const respondToProjectOffer = async (req, res) => {
 
 async function teamFullPushNotification(talent_id, project_id, role_name) {
     await notificationModel.createNewNotification({
-        user_id: userId,
+        user_id: talent_id,
         notification_title: 'Team Already Full',
         notification_desc: `Sorry, ${role_name} role for this project is full filled`,
         notification_type: 'PROJECT_FULL',
@@ -280,7 +280,7 @@ async function teamFullPushNotification(talent_id, project_id, role_name) {
 
 async function projectStartedPushNotification(talent_id, project_id, role_name) {
     await notificationModel.createNewNotification({
-        user_id: userId,
+        user_id: talent_id,
         notification_title: 'Project Started',
         notification_desc: `Project has officially started`,
         notification_type: 'PROJECT_STARTED',
@@ -318,7 +318,7 @@ async function projectStartedPushNotification(talent_id, project_id, role_name) 
 
 async function getProjectPushNotification(talent_id, project_id, role_name) {
     await notificationModel.createNewNotification({
-        user_id: userId,
+        user_id: talent_id,
         notification_title: 'You Got New Project!',
         notification_desc: `You are invited to a project as a ${role_name}`,
         notification_type: 'PROJECT_OFFER',
