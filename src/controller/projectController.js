@@ -386,5 +386,6 @@ module.exports = {
     updateProjectCompleted,
     updateProject,
     respondToProjectOffer,
+    inviteTalent,
     deleteProject
 }

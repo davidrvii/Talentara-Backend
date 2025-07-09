@@ -8,6 +8,8 @@ const timelineRoutes = require('./timelineRoutes')
 const portfolioRoutes = require('./portfolioRoutes')
 const categoriesRoutes = require('./categoriesRoutes')
 
+const testingRoutes = require('./testingRoutes')
+
 router.get('/', (req, res) => {
     res.status(200).send("Welcome to Talentara API")
 })
@@ -22,5 +24,7 @@ router.use('/notification', notificationRoutes)
 router.use('/timeline', timelineRoutes)
 router.use('/portfolio', portfolioRoutes)
 router.use('/categories', categoriesRoutes)
+
+router.use('./testing', testingRoutes)
 
 module.exports = router
