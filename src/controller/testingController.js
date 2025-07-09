@@ -4,6 +4,7 @@ const response = require('../../response')
 // Endpoint testing
 const testInviteTalent = async (req, res) => {
     const { body } = req
+    console.log('FULL REQ BODY:', req.body)
 
     try {
         const invitedTalentIds = await inviteTalent(body.project_id, body.role_name, body.role_amount, body.exclude_ids || [])
