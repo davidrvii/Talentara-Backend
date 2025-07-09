@@ -83,7 +83,7 @@ const getFilteredTalent = (role_name, excludeIds = []) => {
 
         WHERE 
             u.is_on_project = 0
-            AND u.is_on_project = 0
+            AND t.availability = 1
             AND r.role_name = ?
             ${excludeIdsCondition}
 
