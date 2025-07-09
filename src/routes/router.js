@@ -25,6 +25,6 @@ router.use('/timeline', timelineRoutes)
 router.use('/portfolio', portfolioRoutes)
 router.use('/categories', categoriesRoutes)
 
-router.use('/testing', testingRoutes)
+router.use('/testapi', testingRoutes)
 
 module.exports = router
