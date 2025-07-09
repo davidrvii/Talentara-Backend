@@ -1,20 +1,23 @@
 const { inviteTalent } = require('../controller/projectController')
+const response = require('../../response')
 
 // Endpoint testing
 const testInviteTalent = async (req, res) => {
     const { project_id, role_name, role_amount, exclude_ids } = req.body
 
     try {
-        const result = await inviteTalent(project_id, role_name, role_amount, exclude_ids || [])
-        res.status(200).json({
-            message: 'Talent successfully invited',
-            invited_talent_ids: result
-        })
+        const invitedTalentIds = await inviteTalent(project_id, role_name, role_amount, exclude_ids || [])
+        
+        if (invitedTalentIds.length === 0) {
+            return response(404, { invitedTalentIds }, 'No suitable talent found for this role', res)
+        }
+
+        response(200, { invitedTalentIds }, 'Invite Talent Success', res)
     } catch (error) {
-        console.error('Error in testInviteTalent:', error)
-        res.status(500).json({ message: 'Internal Server Error', error: error.message })
+        console.error('Error in testInviteTalent:', error.message)
+        response(500, { error: error.message }, 'Invite Talent: Server Error', res)
     }
-}
+};
 
 module.exports = {
     testInviteTalent
