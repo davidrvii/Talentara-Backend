@@ -1,5 +1,6 @@
 const projectModel = require('../models/projectModels')
 const timelineModel = require('../models/timelineModels')
+const notificationModel = require('../models/notificationModels')
 const response = require('../../response')
 const { generateProjectAnalysis } = require('../utils/openai')
 const { findRecommendedTalent } = require('../utils/ncf')
