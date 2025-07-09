@@ -8,6 +8,7 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
         const [talents] = await getFilteredTalent(role_name, excludeIds)
 
         console.log('Filtered Talents:', JSON.stringify(talents, null, 2))
+        console.log('Project Detail:', JSON.stringify(projectDetail, null, 2))
 
 
         if (talents.length === 0) {
@@ -26,6 +27,8 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
             'https://talentara-ncf-production.up.railway.app/rank_talent', 
             payload
         )
+        console.log('NCF Response:', JSON.stringify(response.data, null, 2));
+
 
         const rankedTalents = response.data
 
