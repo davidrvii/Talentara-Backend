@@ -7,7 +7,8 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
         const projectDetail = await getProjectDetail(project_id)
         const [talents] = await getFilteredTalent(role_name, excludeIds)
 
-        console.log(`Filtered Talents: ${talents}`)
+        console.log('Filtered Talents:', JSON.stringify(talents, null, 2))
+
 
         if (talents.length === 0) {
             console.log('No eligible talents found for this role.')
