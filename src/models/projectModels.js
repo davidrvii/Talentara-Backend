@@ -471,7 +471,7 @@ const countAcceptedTalentsByRole = (project_id) => {
 
 const getTalentDeviceToken = (talent_id) => {
     const [rows] = dbPool.execute(
-    'SELECT fcm_token FROM users WHERE user_id = ?',
+    'SELECT fcm_token FROM user WHERE user_id = ?',
     [talent_id]
     )
     if (!rows.length || !rows[0].fcm_token) return null
