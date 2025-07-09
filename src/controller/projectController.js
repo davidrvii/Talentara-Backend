@@ -372,7 +372,9 @@ async function inviteTalent(project_id, role_name, role_amount, excludeIds = [])
     }
 
     console.log("✅ Selected Talent IDs:", selected.map(t => t.talent_id || t.id))
-    return selected.map(t => t.talent_id || t.id)
+    const ids = selected.map(t => t.talent_id || t.id)
+    console.log("🎯 Final Talent IDs:", ids)
+    return ids
 }
 
 const deleteProject = async (req, res) => {
