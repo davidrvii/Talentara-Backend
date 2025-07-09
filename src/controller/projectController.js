@@ -358,12 +358,21 @@ async function getProjectPushNotification(talent_id, project_id, role_name) {
 async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
     const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
     console.log("candidates:", JSON.stringify(candidates, null, 2))
+
+    if (!Array.isArray(candidates)) {
+        throw new Error("Expected array from findRecommendedTalent")
+    }
+
     const selected = candidates.slice(0, role_amount)
     console.log("selected:", JSON.stringify(selected, null, 2))
+
     for (const talent of selected) {
-        await getProjectPushNotification(talent.talent_id, project_id, role_name)
+        const tid = talent.talent_id || talent.id
+        await getProjectPushNotification(tid, project_id, role_name)
     }
-    return selected.map(t => t.talent_id)
+
+    console.log("✅ Selected Talent IDs:", selected.map(t => t.talent_id || t.id))
+    return selected.map(t => t.talent_id || t.id)
 }
 
 const deleteProject = async (req, res) => {
