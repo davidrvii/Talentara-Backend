@@ -3,10 +3,10 @@ const response = require('../../response')
 
 // Endpoint testing
 const testInviteTalent = async (req, res) => {
-    const { project_id, role_name, role_amount, exclude_ids } = req.body
+    const { body } = req
 
     try {
-        const invitedTalentIds = await inviteTalent(project_id, role_name, role_amount, exclude_ids || [])
+        const invitedTalentIds = await inviteTalent(body.project_id, body.role_name, body.role_amount, body.exclude_ids || [])
         
         if (invitedTalentIds.length === 0) {
             return response(404, { invitedTalentIds }, 'No suitable talent found for this role', res)
