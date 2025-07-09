@@ -6,7 +6,7 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
     try {
         const [projectRows] = await getProjectDetail(project_id)
         const projectDetail = projectRows[0]
-        
+
         const [talents] = await getFilteredTalent(role_name, excludeIds)
 
         console.log('Filtered Talents:', JSON.stringify(talents, null, 2))
@@ -19,9 +19,25 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
         }
 
         const payload = {
-            project: projectDetail,
-            talents: talents
+            project: {
+                platform: projectDetail.platforms?.split('|') ?? [],
+                product: projectDetail.product_types?.split('|') ?? [],
+                role: [role_name],
+                language: projectDetail.languages?.split('|') ?? [],
+                tools: projectDetail.tools?.split('|') ?? []
+            },
+            talents: talents.map(t => ({
+                talent_id: t.talent_id,
+                platform: t.platforms?.split('|') ?? [],
+                product: t.product_types?.split('|') ?? [],
+                role: t.roles?.split('|') ?? [],
+                language: t.languages?.split('|') ?? [],
+                tools: t.tools?.split('|') ?? []
+            }))
         }
+
+        console.log("✅ Project payload:", JSON.stringify(payload.project, null, 2));
+        console.log("✅ Talent payloads:", JSON.stringify(payload.talents, null, 2));
 
         console.log(`Calling NCF API with ${talents.length} talents...`)
 
