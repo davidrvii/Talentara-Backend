@@ -357,9 +357,9 @@ async function getProjectPushNotification(talent_id, project_id, role_name) {
 
 async function inviteTalent(project_id, role_name, role_amount, excludeIds = []) {
     const candidates = await findRecommendedTalent(project_id, role_name, excludeIds)
-    console.log(`candidates: ${candidates}`)
+    console.log("candidates:", JSON.stringify(candidates, null, 2))
     const selected = candidates.slice(0, role_amount)
-    console.log(`candidates: ${selected}`)
+    console.log("selected:", JSON.stringify(selected, null, 2))
     for (const talent of selected) {
         await getProjectPushNotification(talent.talent_id, project_id, role_name)
     }
