@@ -10,13 +10,13 @@ const testInviteTalent = async (req, res) => {
         const invitedTalentIds = await inviteTalent(body.project_id, body.role_name, body.role_amount, body.exclude_ids || [])
         
         if (invitedTalentIds.length === 0) {
-            return response(404, { invitedTalentIds }, 'No suitable talent found for this role', res)
+            return response(404, { invitedTalent: invitedTalentIds }, 'No suitable talent found for this role', res)
         }
 
         console.log("invitedTalentIds =", invitedTalentIds)
         console.log("isArray?", Array.isArray(invitedTalentIds))
 
-        response(200, { invitedTalentIds }, 'Invite Talent Success', res)
+        response(200, { invitedTalent: invitedTalentIds }, 'Invite Talent Success', res)
     } catch (error) {
         console.error('Error in testInviteTalent:', error.message)
         response(500, { error: error.message }, 'Invite Talent: Server Error', res)
