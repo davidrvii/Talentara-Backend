@@ -53,7 +53,7 @@ const updateUser = (body, user_id) => {
 }
 
 const saveFcmToken = (user_id, fcm_token) => {
-    const sqlQuery = 'UPDATE users SET fcm_token = ? WHERE user_id = ?'
+    const sqlQuery = 'UPDATE user SET fcm_token = ? WHERE user_id = ?'
 
     return dbPool.execute(sqlQuery, [fcm_token, user_id])
 }
