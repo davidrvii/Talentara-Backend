@@ -24,7 +24,7 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
     const [roles] = await categoriesModel.getAllRole()
     const [languages] = await categoriesModel.getAllLanguage()
     const [tools] = await categoriesModel.getAllTools()
-    const [features] = await categoriesModel.getAllFeatures()
+    const [features] = await categoriesModel.getAllFeature()
 
     //Set list as text for prompting
     const platformList = platforms.map(p => p.platform_name).join(', ')
