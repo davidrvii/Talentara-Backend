@@ -85,7 +85,13 @@ const getFilteredTalent = (role_name, excludeIds = []) => {
             u.is_on_project = 0
             AND t.availability = 1
             AND u.talent_access = 1
-            AND r.role_name = ?
+            AND EXISTS (
+                SELECT 1
+                FROM talent_has_role tr
+                JOIN role r2 ON tr.role_id = r2.role_id
+                WHERE tr.talent_id = t.talent_id
+                AND r2.role_name = ?
+            )
             ${excludeIdsCondition}
 
         GROUP BY t.talent_id
