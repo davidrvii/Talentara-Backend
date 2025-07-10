@@ -4,6 +4,7 @@ const notificationModel = require('../models/notificationModels')
 const response = require('../../response')
 const { generateProjectAnalysis } = require('../utils/openai')
 const { findRecommendedTalent } = require('../utils/ncf')
+const admin = require("../config/firebase")
 
 const getAllProject = async (req, res) => {
     try {
@@ -368,6 +369,7 @@ async function inviteTalent(project_id, role_name, role_amount, excludeIds = [])
 
     for (const talent of selected) {
         const tid = talent.talent_id || talent.id
+        console.log("Talent ID :", tid)
         await getProjectPushNotification(tid, project_id, role_name)
     }
 
