@@ -131,7 +131,11 @@ const updateUser = async (req, res) => {
 
 const saveFcmToken = async (req, res) => {
     const { fcm_token } = req.body
+    console.log(`Body: ${req.body}`)
+    console.log(`FCM Token: ${fcm_token}`)
+
     const user_id = req.userData.user_id
+    console.log((`User ID: ${user_id}`))
 
     try {
         await projectModel.saveFcmToken(user_id, fcm_token)
