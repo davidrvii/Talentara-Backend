@@ -157,7 +157,7 @@ const createNewTalent = async (body, user_id) => {
 
         await conn.execute(
             `UPDATE user SET linkedin = ?, github = ? WHERE user_id = ?`,
-            [body.linkedin_profile, body.github_profile, user_id]
+            [body.linkedIn, body.github, user_id]
         )
 
         const talent_id = user_id  // PK = user_id
