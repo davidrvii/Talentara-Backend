@@ -138,10 +138,10 @@ const saveFcmToken = async (req, res) => {
     console.log((`User ID: ${user_id}`))
 
     try {
-        await projectModel.saveFcmToken(user_id, fcm_token)
+        await userModel.saveFcmToken(user_id, fcm_token)
         response(200, {fcmToken: fcm_token}, 'FCM Token Saved Successfully', res)
     } catch (error) {
-        response(200, {error: error}, 'Error Saving FCM Token: Server Error', res)
+        response(500, {error: error}, 'Error Saving FCM Token: Server Error', res)
         throw error
     }
 }
