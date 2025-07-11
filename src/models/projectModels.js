@@ -470,13 +470,9 @@ const countAcceptedTalentsByRole = (project_id) => {
 }
 
 const getTalentDeviceToken = (talent_id) => {
-    const [rows] = dbPool.execute(
-    'SELECT fcm_token FROM user WHERE user_id = ?',
-    [talent_id]
-    )
-    if (!rows.length || !rows[0].fcm_token) return null
-    return rows[0].fcm_token
-}
+    const sqlQuery = `SELECT fcm_token FROM user WHERE user_id = ?`;
+    return dbPool.execute(sqlQuery, [talent_id]);
+};
 
 const updateProjectStatus = (project_id, status_id) => {
     const sqlQuery = `UPDATE project SET status_id = ? WHERE project_id = ?`
