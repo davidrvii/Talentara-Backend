@@ -328,6 +328,7 @@ async function getProjectPushNotification(talent_id, project_id, role_name) {
     })
 
     const token = await projectModel.getTalentDeviceToken(talent_id)
+    console.log("Used FCM Token: ", token);
     if (!token) {
     console.warn(`No FCM token for talent ${talent_id}, skipping notification`)
     return
