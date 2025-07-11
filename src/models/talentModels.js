@@ -44,7 +44,6 @@ const getAllTalent = () => {
 };
 
 const getFilteredTalent = (role_name, excludeIds = []) => {
-    // Siapkan bagian excludeIds
     const excludeIdsCondition = excludeIds.length > 0 
         ? `AND t.talent_id NOT IN (${excludeIds.map(() => '?').join(',')})` 
         : '';
