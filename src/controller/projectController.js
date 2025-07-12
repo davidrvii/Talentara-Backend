@@ -111,6 +111,7 @@ const createNewProject = async (req, res) => {
     const user_id = req.userData.user_id
     try {
         const parsed = await generateProjectAnalysis({project_desc, start_date, end_date})
+        console.log('Parsed: ', parsed)
         if (!parsed) {
             return response(500, {}, 'Error generating project analysis', res)
         }       
@@ -132,7 +133,7 @@ const createNewProject = async (req, res) => {
         }
     
         // Insert project
-        const projectResult = await projectModel.createNewProject(newProjectBody, user_id);
+        const projectResult = await projectModel.createNewProject(newProjectBody, user_id)
         const project_id = projectResult.project_id
 
         //Create Project Timeline
