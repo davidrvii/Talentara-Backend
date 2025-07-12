@@ -196,6 +196,20 @@ const updateProject = async (req, res) => {
     }
 }
 
+const updateProjectStatus = async (req, res) => {
+    const { id } = req.params
+    const { status_id } = req.body
+
+    try {
+        await projectModel.updateProjectStatus(id, status_id)
+
+        response(200, {updatedProjectStatus: {projectId: id, statusId: status_id}}, 'Update Project Status Success', res)
+    } catch (error) {
+        response(200, {error: error}, 'Update Project Status: Server Error', res)
+        throw error
+    }
+}
+
 // Talent Accept or Decline Project
 const respondToProjectOffer = async (req, res) => {
     const { project_id, talent_id, role_name, accept } = req.body
@@ -405,6 +419,7 @@ module.exports = {
     createNewProject,
     updateProjectCompleted,
     updateProject,
+    updateProjectStatus,
     respondToProjectOffer,
     inviteTalent,
     deleteProject
