@@ -182,10 +182,13 @@ const updateProject = async (req, res) => {
 
         //Get project Required Role
         const requiredRole = await projectModel.getProjectRoleRequirement(id)
+
+        // Filter out "Project Manager"
+        const filteredRoles = requiredRole.filter(({ role_name }) => role_name !== "Project Manager")
         
         //Parallel Role Invite
         await Promise.all(
-            requiredRole.map(({ role_name, role_amount }) =>
+            filteredRoles.map(({ role_name, role_amount }) =>
                 inviteTalent(id, role_name, role_amount)
             )
         )
