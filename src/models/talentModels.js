@@ -296,15 +296,6 @@ const updateTalent = async (body, talent_id) => {
     }
 }
 
-
-const updateTalentDeclineCount = async (talent_id) => {
-    const sqlQuery = `
-        UPDATE talent
-        SET project_declined = project_declined + 1
-        WHERE talent_id = ?`
-    return dbPool.execute(sqlQuery, [talent_id]);
-}
-
 //Delete a Talent By ID (Testing-Only)
 const deleteTalent = (talent_id) => {
     const sqlQuery = `DELETE FROM talent WHERE talent_id = ?`
@@ -318,6 +309,5 @@ module.exports = {
     getTalentDetail,
     createNewTalent,
     updateTalent,
-    updateTalentDeclineCount,
     deleteTalent
 }
