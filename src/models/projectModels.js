@@ -75,7 +75,7 @@ const getAllProjectHistory = (talent_id) => {
                 OR pht.talent_id = ?
 
             GROUP BY p.project_id
-            ORDER BY p.start_date ASC`
+            ORDER BY p.start_date DESC`
 
     return dbPool.execute(sqlQuery, [talent_id, talent_id])
 }

@@ -10,7 +10,8 @@ const getAllNotification = () => {
 //Get All Notification By Specific User
 const getHistoryNotification = (user_id) => {
     const sqlQuery =   `SELECT * FROM notification
-                        WHERE user_id = ?`
+                        WHERE user_id = ?
+                        ORDER BY created_at DESC`
 
     return dbPool.execute(sqlQuery, [user_id])
 }
