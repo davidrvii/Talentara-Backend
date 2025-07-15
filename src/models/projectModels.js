@@ -167,7 +167,7 @@ const getProjectOrder = (project_id) => {
 const getCurrentProject = (user_id) => {
     const sqlQuery = `
         SELECT 
-            p.project_id
+            p.project_id,
             p.project_name,
             p.client_name,
             p.end_date,
