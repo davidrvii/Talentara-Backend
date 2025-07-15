@@ -485,7 +485,7 @@ const getTalentDeviceToken = (talent_id) => {
 const updateProjectStatus = (project_id, status_id) => {
     const sqlQuery = `UPDATE project SET status_id = ? WHERE project_id = ?`
 
-    return dbPool.execute(sqlQuery, [project_id, status_id])
+    return dbPool.execute(sqlQuery, [status_id, project_id])
 }
 
 module.exports = {
