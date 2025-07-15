@@ -87,22 +87,23 @@ const getProjectDetail = (project_id) => {
             p.*,
             s.status_name,
             cu.user_email AS client_email,
+            
             GROUP_CONCAT(DISTINCT CONCAT(tlt.talent_id, ':', u.user_name, ' (', r.role_name, ')') SEPARATOR '|') AS talents,
             GROUP_CONCAT(DISTINCT t.tools_name SEPARATOR '|') AS tools,
             GROUP_CONCAT(DISTINCT l.language_name SEPARATOR '|') AS languages,
             GROUP_CONCAT(DISTINCT pt.product_type_name SEPARATOR '|') AS product_types,
             GROUP_CONCAT(DISTINCT pf.platform_name SEPARATOR '|') AS platforms,
-            GROUP_CONCAT(DISTINCT f.feature_name SEPARATOR '|') AS features
+            GROUP_CONCAT(DISTINCT f.feature_name SEPARATOR '|') AS features,
+            GROUP_CONCAT(DISTINCT CONCAT(r2.role_name, ' (', phr.role_amount, ')') SEPARATOR '|') AS roles_needed
+
         FROM project p
 
         JOIN status s ON p.status_id = s.status_id
-
         LEFT JOIN user cu ON p.user_id = cu.user_id
 
         LEFT JOIN project_has_talent pht ON p.project_id = pht.project_id
         LEFT JOIN talent tlt ON pht.talent_id = tlt.talent_id
         LEFT JOIN user u ON tlt.talent_id = u.user_id
-
         LEFT JOIN role r ON pht.role_id = r.role_id
 
         LEFT JOIN project_has_tools pht2 ON p.project_id = pht2.project_id
@@ -120,10 +121,15 @@ const getProjectDetail = (project_id) => {
         LEFT JOIN project_has_feature phf ON p.project_id = phf.project_id
         LEFT JOIN feature f ON phf.feature_id = f.feature_id
 
-        WHERE p.project_id = ?
-        GROUP BY p.project_id`
+        -- Tambahan untuk role_amount
+        LEFT JOIN project_has_role phr ON p.project_id = phr.project_id
+        LEFT JOIN role r2 ON phr.role_id = r2.role_id
 
-    return dbPool.execute(sqlQuery, [project_id])
+        WHERE p.project_id = ?
+        GROUP BY p.project_id
+    `;
+
+    return dbPool.execute(sqlQuery, [project_id]);
 }
 
 //Get an Ordered Project to Send to Chosen Talent
