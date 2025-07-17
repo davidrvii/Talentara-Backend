@@ -1,6 +1,7 @@
 const axios = require('axios')
 const { getProjectDetail } = require('../models/projectModels')
 const { getFilteredTalent } = require('../models/talentModels')
+const { filterProjectByRole } = require('./openai')
 
 async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
     try {
