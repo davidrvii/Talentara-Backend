@@ -7,6 +7,7 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
     try {
         const [projectRows] = await getProjectDetail(project_id)
         const projectDetail = projectRows[0]
+        console.log('Project Detail NCF: ', projectDetail)
 
         const [talents] = await getFilteredTalent(role_name, excludeIds)
 
@@ -25,7 +26,7 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
         const payload = {
             project: {
                 platform: filteredProject.platform,
-                product: filteredProject.product_type,
+                product: filteredProject.product,
                 role: [role_name],
                 language: filteredProject.language,
                 tools: filteredProject.tools
