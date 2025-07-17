@@ -20,6 +20,7 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
         }
 
         const filteredProject = await filterProjectByRole(projectDetail, role_name)
+        console.log('filteredProject: ', filteredProject)
 
         const payload = {
             project: {

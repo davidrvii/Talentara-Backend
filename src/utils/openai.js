@@ -115,7 +115,8 @@ const filterProjectByRole = async (projectDetail, role_name) => {
     Instructions:
   - Do not over-filter. Return values that are generally or loosely related to this role.
   - If a category becomes empty after filtering, or no value in that category is relevant, KEEP the original values unfiltered.
-
+  - Return a complete JSON for all 4 categories (platform, product, language, tools).
+  
   Input:
     - Platforms: ${projectDetail.platforms}
     - Products: ${projectDetail.product_types}
