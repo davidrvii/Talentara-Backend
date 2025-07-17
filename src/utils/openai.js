@@ -35,12 +35,10 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
     const featureList = features.map(r => r.feature_name).join(', ')
 
     const prompt =  `
-                  Berdasarkan deskripsi project berikut:
-                  """
+                  Given the following project description:
                   ${project_desc}
-                  """
 
-                  Analisis dan hasilkan output JSON dengan format berikut:
+                  Analyze and return a JSON with the following format:
 
                   {
                     "platforms": [],
@@ -55,20 +53,20 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
                     ]
                   }
 
-                  Ketentuan pilihan:
+                  Available options:
                   - Platforms: ${platformList}
                   - Product Types: ${productTypeList}
                   - Languages: ${languageList}
                   - Tools: ${toolsList}
-                  - Roles: ${roleList} (Wajib ada Project Manager max. 1 orang)
+                  - Roles: ${roleList} (Must include 1 Project Manager)
                   - Features: ${featureList}
 
-                  Tugas:
-                  1. Tentukan pilihan yang paling sesuai atau tambahkan baru jika tidak tersedia.
-                  2. Tulis ulang deskripsi agar lebih profesional.
-                  3. Susun minimal 3 fase timeline dari antara ${start_date} s/d ${end_date}.
+                  Instructions:
+                  1. Select the most relevant items from the options above.
+                  2. Rewrite the description to sound more professional and structured.
+                  3. Create at least 3 project phases in the timeline between ${start_date} and ${end_date}.
 
-                  Output hanya dalam JSON sesuai format di atas.
+                  Output ONLY the final JSON (no explanation, no extra text).
                 `
 
           let modelsToTry = ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo']
