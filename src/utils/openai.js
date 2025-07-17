@@ -110,9 +110,13 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
 const filterProjectByRole = async (projectDetail, role_name) => {
   try {
     const prompt = `
-    Given the following project categories and the target role "${role_name}", 
-    select only values that are relevant or loosely related to this role. 
-    If no category is clearly relevant, KEEP the original values unfiltered.
+    Filter the following project categories based on the relevance to the target role: "${role_name}".
+
+    Instructions:
+  - Return only values that are directly or loosely related to this role.
+  - If you are unsure, KEEP the original values.
+  - Do NOT remove categories unless they are clearly unrelated.
+  - If no category is clearly relevant, KEEP the original values unfiltered.
 
     Return ONLY in this exact JSON format:
     {
