@@ -113,10 +113,14 @@ const filterProjectByRole = async (projectDetail, role_name) => {
     Filter the following project categories based on the relevance to the target role: "${role_name}".
 
     Instructions:
-  - Return only values that are directly or loosely related to this role.
-  - If you are unsure, KEEP the original values.
-  - Do NOT remove categories unless they are clearly unrelated.
-  - If no category is clearly relevant, KEEP the original values unfiltered.
+  - Do not over-filter. Return values that are generally or loosely related to this role.
+  - If a category becomes empty after filtering, or no value in that category is relevant, KEEP the original values unfiltered.
+
+  Input:
+    - Platforms: ${projectDetail.platforms}
+    - Products: ${projectDetail.product_types}
+    - Languages: ${projectDetail.languages}
+    - Tools: ${projectDetail.tools}
 
     Return ONLY in this exact JSON format:
     {
@@ -125,12 +129,6 @@ const filterProjectByRole = async (projectDetail, role_name) => {
       "language": [],
       "tools": []
     }
-
-    Input:
-    - Platforms: ${projectDetail.platforms}
-    - Products: ${projectDetail.product_types}
-    - Languages: ${projectDetail.languages}
-    - Tools: ${projectDetail.tools}
     `.trim()
 
     let modelsToTry = ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo']
