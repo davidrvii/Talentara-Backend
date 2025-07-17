@@ -18,13 +18,15 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
             return []
         }
 
+        const filteredProject = await filterProjectByRole(projectDetail, role_name)
+
         const payload = {
             project: {
-                platform: projectDetail.platforms?.split('|') ?? [],
-                product: projectDetail.product_types?.split('|') ?? [],
+                platform: filteredProject.platforms,
+                product: filteredProject.product_types,
                 role: [role_name],
-                language: projectDetail.languages?.split('|') ?? [],
-                tools: projectDetail.tools?.split('|') ?? []
+                language: filteredProject.languages,
+                tools: filteredProject.tools
             },
             talents: talents.map(t => ({
                 talent_id: t.talent_id,

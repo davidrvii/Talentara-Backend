@@ -109,7 +109,71 @@ const generateProjectAnalysis = async ({project_desc, start_date, end_date}) => 
   }
 }
 
+const filterProjectByRole = async (projectDetail, role_name) => {
+  try {
+    const prompt = `
+    Given the following project categories and the target role "${role_name}", 
+    select only values that are relevant or loosely related to this role. 
+    If no category is clearly relevant, KEEP the original values unfiltered.
+
+    Return ONLY in this exact JSON format:
+    {
+      "platform": [],
+      "product": [],
+      "language": [],
+      "tools": []
+    }
+
+    Input:
+    - Platforms: ${projectDetail.platforms}
+    - Products: ${projectDetail.product_types}
+    - Languages: ${projectDetail.languages}
+    - Tools: ${projectDetail.tools}
+    `.trim()
+
+    let modelsToTry = ['gpt-4o-mini', 'gpt-4o', 'gpt-4-turbo', 'gpt-3.5-turbo']
+    let lastError = null
+
+    for (let model of modelsToTry) {
+      try {
+        console.log(`🔍 Trying model: ${model}`)
+        const completion = await callChatCompletion(model, prompt)
+        let content = completion.choices[0].message.content.trim()
+
+        // Clean code block if exists
+        if (content.startsWith("```json")) {
+          content = content.replace(/```json/, "").replace(/```/, "").trim()
+        } else if (content.startsWith("```")) {
+          content = content.replace(/```/, "").replace(/```/, "").trim()
+        }
+
+        const parsed = JSON.parse(content)
+        return parsed
+      } catch (error) {
+        console.error(`⚠️ Error with model ${model}:`, error.message)
+        lastError = error
+        if (error.status === 429 || error.message.includes('quota')) {
+          continue
+        } else {
+          throw error
+        }
+      }
+    }
+    throw lastError
+
+  } catch (error) {
+    console.error('Error in filterProjectByRole:', error.message)
+    return {
+      platform: [],
+      product: [],
+      language: [],
+      tools: []
+    }
+  }
+}
+
 module.exports = { 
   openai,
-  generateProjectAnalysis 
+  generateProjectAnalysis,
+  filterProjectByRole
 }
