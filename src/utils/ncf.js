@@ -43,7 +43,6 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
 
         console.log("✅ Project payload:", JSON.stringify(payload.project, null, 2));
         console.log("✅ Talent payloads:", JSON.stringify(payload.talents, null, 2));
-
         console.log(`Calling NCF API with ${talents.length} talents...`)
 
         const response = await axios.post(
@@ -52,9 +51,7 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
         )
         console.log('NCF Response:', JSON.stringify(response.data, null, 2));
 
-
         const rankedTalents = response.data
-
         // Map talent_id to talent object
         const rankedTalentObjects = rankedTalents.map(rank => {
             const talentObj = talents.find(t => t.talent_id === rank.talent_id)
@@ -64,13 +61,11 @@ async function findRecommendedTalent(project_id, role_name, excludeIds = []) {
                 score: rank.score
             }
         })
-
         return rankedTalentObjects
     } catch(error) {
         console.error('Error in findRecommendedTalent:', error.message)
         return [] 
     }
-    
 }
 
 module.exports = {
